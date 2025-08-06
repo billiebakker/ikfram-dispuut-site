@@ -4,15 +4,14 @@
   <main
     class="w-full h-screen bg-ribbook-red flex flex-col justify-between items-center overflow-hidden"
   >
-    <HeaderBar v-if="true" />
+    <TopHeaderBar />
     <router-view />
 
-    <!--  TODO if not logged in-->
-    <BottomNavBar v-if="true" />
+    <BottomNavBar />
   </main>
 </template>
 <script>
-import HeaderBar from '@/components/HeaderBar.vue'
+import TopHeaderBar from '@/components/TopHeaderBar.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue' // import LoginRegisterView from '@/views/LoginRegisterView.vue'
 // import LoginRegisterView from '@/views/LoginRegisterView.vue'
 // import AppAuth from '@/components/AppAuth.vue'
@@ -23,7 +22,7 @@ import BottomNavBar from '@/components/BottomNavBar.vue' // import LoginRegister
 export default {
   name: 'App',
   components: {
-    HeaderBar,
+    TopHeaderBar,
     BottomNavBar,
     // LoginRegisterView,
 
