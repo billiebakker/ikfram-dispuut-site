@@ -9,9 +9,5 @@ export default defineComponent({
 </script>
 
 <template>
-  <section
-    class="self-stretch bg-ribbook-red inline-flex flex-col justify-between items-center overflow-hidden"
-  >
-    <PostsList />
-  </section>
+  <PostsList />
 </template>
