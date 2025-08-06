@@ -13,7 +13,8 @@ export default {
         Ribbook
       </div>
     </div>
-    <!--    <span class="icon w-9 h-6 left-[23px] top-[26px] absolute bg-ribbook-yellow">Menu</span>-->
-    <span class="icon icon-40 icon-yellow left-[23px] top-[12px] absolute">Menu</span>
+    <div class="absolute h-full left-[23px] top-0 flex justify-center items-center">
+      <span class="icon icon-40 icon-yellow">Menu</span>
+    </div>
   </div>
 </template>

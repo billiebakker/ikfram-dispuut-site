@@ -1,13 +1,16 @@
 <script>
 import { defineComponent } from 'vue'
-import PostItem from '@/components/PostComponents/PostItem.vue'
-import Test from '@/components/test.vue'
+import PostsList from '@/components/PostComponents/PostsList.vue'
 
 export default defineComponent({
-  components: { Test, PostItem },
+  components: { PostsList },
 })
 </script>
 
 <template>
-  <test />
+  <section
+    class="self-stretch bg-ribbook-red inline-flex flex-col justify-between items-center overflow-hidden"
+  >
+    <PostsList />
+  </section>
 </template>
