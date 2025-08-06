@@ -1,43 +1,29 @@
 <template>
-  <!--  TODO if not logged in-->
-  <!--  <AppAuth />-->
-
   <main class="w-full h-screen bg-ribbook-red flex flex-col overflow-hidden">
-    <TopHeaderBar />
+    <TopHeaderBar v-if="userStore.userLoggedIn" />
 
     <section class="flex-1 overflow-auto">
       <router-view />
     </section>
 
-    <BottomNavBar />
+    <BottomNavBar v-if="userStore.userLoggedIn" />
   </main>
 </template>
 
 <script>
 import TopHeaderBar from '@/components/TopHeaderBar.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue'
-// import LoginRegisterView from '@/views/LoginRegisterView.vue'
-// import AppAuth from '@/components/AppAuth.vue'
-// import { mapWritableState } from 'pinia'
-// import useUserStore from './stores/user'
-// import { auth } from './includes/firebase'
+import { mapStores } from 'pinia'
+import useUserStore from './stores/user'
 
 export default {
   name: 'App',
   components: {
     TopHeaderBar,
     BottomNavBar,
-    // LoginRegisterView,
-
-    // AppAuth,
   },
-  // computed: {
-  //   ...mapWritableState(useUserStore, ['userLoggedIn']),
-  // },
-  // created() {
-  //   if (auth.currentUser) {
-  //     this.userLoggedIn = true
-  //   }
-  // },
+  computed: {
+    ...mapStores(useUserStore),
+  },
 }
 </script>
