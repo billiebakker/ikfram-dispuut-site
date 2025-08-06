@@ -1,85 +1,41 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <!--  TODO if not logged in-->
+  <!--  <AppAuth />-->
+  <main
+    class="w-full h-screen bg-ribbook-red flex flex-col justify-between items-center overflow-hidden"
+  >
+    <HeaderBar v-if="true" />
+    <router-view />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <!--  TODO if not logged in-->
+    <BottomNavBar v-if="true" />
+  </main>
 </template>
+<script>
+import HeaderBar from '@/components/HeaderBar.vue'
+import BottomNavBar from '@/components/BottomNavBar.vue' // import LoginRegisterView from '@/views/LoginRegisterView.vue'
+// import LoginRegisterView from '@/views/LoginRegisterView.vue'
+// import AppAuth from '@/components/AppAuth.vue'
+// import { mapWritableState } from 'pinia'
+// import useUserStore from './stores/user'
+// import { auth } from './includes/firebase'
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+export default {
+  name: 'App',
+  components: {
+    HeaderBar,
+    BottomNavBar,
+    // LoginRegisterView,
+
+    // AppAuth,
+  },
+  // computed: {
+  //   ...mapWritableState(useUserStore, ['userLoggedIn']),
+  // },
+  // created() {
+  //   if (auth.currentUser) {
+  //     this.userLoggedIn = true
+  //   }
+  // },
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+</script>
