@@ -1,9 +1,13 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+<script>
+import { defineComponent } from 'vue'
+import PostItem from '@/components/PostComponents/PostItem.vue'
+import Test from '@/components/test.vue'
+
+export default defineComponent({
+  components: { Test, PostItem },
+})
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <test />
 </template>
