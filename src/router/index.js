@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
 import LoginRegisterView from '@/views/LoginRegisterView.vue'
-import PostsView from '@/views/PostsView.vue'
+import ActivitiesView from '@/views/ActivitiesView.vue'
+import AccountView from '@/views/AccountView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,24 +18,19 @@ const router = createRouter({
       redirect: { name: 'home' },
     },
     {
-      path: '/posts',
-      name: 'posts',
-      component: PostsView,
-    },
-    {
       path: '/login',
       name: 'login',
       component: LoginRegisterView,
     },
     {
       path: '/activiteiten',
-      name: 'activiteiten',
-      // component: ActiviteitenView,
+      name: 'activities',
+      component: ActivitiesView,
     },
     {
       path: '/account',
       name: 'account',
-      // component: ManageAccountView,
+      component: AccountView,
     },
   ],
 })

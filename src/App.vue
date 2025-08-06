@@ -1,19 +1,21 @@
 <template>
   <!--  TODO if not logged in-->
   <!--  <AppAuth />-->
-  <main
-    class="w-full h-screen bg-ribbook-red flex flex-col justify-between items-center overflow-hidden"
-  >
-    <HeaderBar v-if="true" />
-    <router-view />
 
-    <!--  TODO if not logged in-->
-    <BottomNavBar v-if="true" />
+  <main class="w-full h-screen bg-ribbook-red flex flex-col overflow-hidden">
+    <TopHeaderBar />
+
+    <section class="flex-1 overflow-auto">
+      <router-view />
+    </section>
+
+    <BottomNavBar />
   </main>
 </template>
+
 <script>
-import HeaderBar from '@/components/HeaderBar.vue'
-import BottomNavBar from '@/components/BottomNavBar.vue' // import LoginRegisterView from '@/views/LoginRegisterView.vue'
+import TopHeaderBar from '@/components/TopHeaderBar.vue'
+import BottomNavBar from '@/components/BottomNavBar.vue'
 // import LoginRegisterView from '@/views/LoginRegisterView.vue'
 // import AppAuth from '@/components/AppAuth.vue'
 // import { mapWritableState } from 'pinia'
@@ -23,7 +25,7 @@ import BottomNavBar from '@/components/BottomNavBar.vue' // import LoginRegister
 export default {
   name: 'App',
   components: {
-    HeaderBar,
+    TopHeaderBar,
     BottomNavBar,
     // LoginRegisterView,
 
