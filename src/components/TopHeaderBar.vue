@@ -17,7 +17,6 @@ export default {
         home: 'Ribbook',
         activities: 'Activiteiten',
         account: 'Account',
-        login: 'Inloggen',
       }
       // Ribbook als geen match
       return map[this.$route.name] || 'Ribbook'

@@ -1,5 +1,7 @@
 <script>
 import { ErrorMessage } from 'vee-validate'
+import { mapActions } from 'pinia'
+import useUserStore from '@/stores/user'
 
 export default {
   name: 'LoginForm',
@@ -17,6 +19,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useUserStore, {
+      loginUser: 'authenticate',
+    }),
     async login(values) {
       this.login_in_submission = true
       this.login_show_alert = true
@@ -24,7 +29,7 @@ export default {
       this.login_alert_msg = 'even wachten...'
 
       try {
-        await this.$store.dispatch('login', values)
+        await this.loginUser(values)
       } catch (error) {
         this.login_in_submission = false
         this.login_alert_variant = 'bg-red-500'
@@ -35,7 +40,7 @@ export default {
 
       this.login_alert_variant = 'bg-green-500'
       this.login_alert_msg = 'Yay gelukt!'
-      window.location.reload()
+      this.$router.push({ name: 'home' })
     },
   },
 }

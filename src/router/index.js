@@ -38,14 +38,26 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to) => {
+  const publicPages = ['login']
+  const authRequired = !publicPages.includes(to.name)
   const userStore = useUserStore()
 
-  if (to.name !== 'login' && !userStore.userLoggedIn) {
-    next({ name: 'login' })
-  } else {
-    next()
+  if (!userStore.authReady) {
+    await userStore.initAuth()
   }
+
+  // unauthed en wil naar een page
+  if (authRequired && !userStore.userLoggedIn) {
+    return { name: 'login' }
+  }
+
+  // om authed gebruikers naar home te sturen als ze naar login gaan
+  if (to.name === 'login' && userStore.userLoggedIn) {
+    return { name: 'home' }
+  }
+
+  return true
 })
 
 export default router

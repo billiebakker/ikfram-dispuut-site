@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       registerSchema: {
-        naam: 'required|min:2|max:60|alpha_spaces',
+        name: 'required|min:2|max:60|alpha_spaces',
         email: 'required|email|max:100',
         password: 'required|min:8|max:100',
         confirm_password: 'passwords_mismatch:@password',
@@ -42,7 +42,7 @@ export default {
 
       this.reg_alert_variant = 'bg-green-500'
       this.reg_alert_msg = 'Yay gelukt!'
-      window.location.reload()
+      this.$router.push({ name: 'home' })
     },
   },
 }
@@ -63,19 +63,19 @@ export default {
       @submit="register"
       class="w-full flex flex-col items-center gap-4"
     >
-      <!-- naam -->
+      <!-- name -->
       <div class="w-full">
         <label
           class="w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray flex items-center"
         >
           <vee-field
-            name="naam"
+            name="name"
             type="text"
             placeholder="Naam"
             class="w-full text-text-muted text-base font-normal focus:outline-none"
           />
         </label>
-        <ErrorMessage name="naam" class="text-ribbook-yellow text-sm mt-1 block" />
+        <ErrorMessage name="name" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
       <!--      email-->
@@ -93,7 +93,7 @@ export default {
         <ErrorMessage name="email" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
-      <!-- wachtwoord -->
+      <!-- password-->
       <div class="w-full">
         <label
           class="w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray flex items-center"
@@ -124,6 +124,7 @@ export default {
         <ErrorMessage name="confirm_password" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
+      <!--      TODO button styling, vooral als in submission (en hover evt)-->
       <!-- submit -->
       <div class="w-full flex flex-col items-center gap-4 my-6">
         <button

@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      loginOrRegister: 'loin',
+      loginOrRegister: 'login',
     }
   },
 }
