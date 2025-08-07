@@ -14,7 +14,7 @@
 import TopHeaderBar from '@/components/TopHeaderBar.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue'
 import { mapStores } from 'pinia'
-import useUserStore from './stores/user'
+import useUserStore from '@/stores/user'
 
 export default {
   name: 'App',

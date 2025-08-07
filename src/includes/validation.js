@@ -34,18 +34,28 @@ export default {
 
     configure({
       generateMessage: (ctx) => {
-        const messages = {
-          required: `${ctx.field} is vereist`,
-          min: `${ctx.field} is te kort, minimaal ${ctx.length} karakters`,
-          max: `${ctx.field} is te lang, maximaal ${ctx.length} karakters`,
-          alpha_spaces: `${ctx.field} moet alphabetisch zijn`,
-          email: `Onjuist e-mailadres`,
-          min_value: `${ctx.field} is te laag`,
-          max_value: `${ctx.field} is te hoog`,
-          passwords_mismatch: `De wachtwoorden komen niet overeen!`,
+        const fieldNames = {
+          naam: 'Naam',
+          email: 'E-mailadres',
+          age: 'Leeftijd',
+          password: 'Wachtwoord',
+          confirm_password: 'Wachtwoord bevestigen',
         }
 
-        return messages[ctx.rule.name] ? messages[ctx.rule.name] : `${ctx.field} is onjuist`
+        const messages = {
+          required: `${fieldNames[ctx.field] || ctx.field} is vereist!`,
+          min: `${fieldNames[ctx.field] || ctx.field} is te kort, minimaal ${ctx.rule.params[0]} karakters!`,
+          max: `${fieldNames[ctx.field] || ctx.field} is te lang, maximaal ${ctx.rule.params[0]} karakters!`,
+          alpha_spaces: `${fieldNames[ctx.field] || ctx.field} moet alleen letters en spaties bevatten!!`,
+          email: `Ongeldig e-mailadres :(!`,
+          min_value: `${fieldNames[ctx.field] || ctx.field} is te laag!`,
+          max_value: `${fieldNames[ctx.field] || ctx.field} is te hoog!`,
+          passwords_mismatch: `De wachtwoorden komen niet overeen!!`,
+        }
+
+        return messages[ctx.rule.name]
+          ? messages[ctx.rule.name]
+          : `${fieldNames[ctx.field] || ctx.field} is onjuist`
       },
     })
   },
