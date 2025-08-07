@@ -1,43 +1,37 @@
-<template>
-  <!--  TODO if not logged in-->
-  <!--  <AppAuth />-->
-
-  <main class="w-full h-screen bg-ribbook-red flex flex-col overflow-hidden">
-    <TopHeaderBar />
-
-    <section class="flex-1 overflow-auto">
-      <router-view />
-    </section>
-
-    <BottomNavBar />
-  </main>
-</template>
-
-<script>
+<script lang="ts">
 import TopHeaderBar from '@/components/TopHeaderBar.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue'
-// import LoginRegisterView from '@/views/LoginRegisterView.vue'
-// import AppAuth from '@/components/AppAuth.vue'
-// import { mapWritableState } from 'pinia'
-// import useUserStore from './stores/user'
-// import { auth } from './includes/firebase'
+import useUserStore from '@/stores/user'
 
 export default {
   name: 'App',
   components: {
     TopHeaderBar,
     BottomNavBar,
-    // LoginRegisterView,
-
-    // AppAuth,
   },
-  // computed: {
-  //   ...mapWritableState(useUserStore, ['userLoggedIn']),
-  // },
-  // created() {
-  //   if (auth.currentUser) {
-  //     this.userLoggedIn = true
-  //   }
-  // },
+  computed: {
+    userLoggedIn() {
+      return useUserStore().userLoggedIn
+    },
+    authReady() {
+      return useUserStore().authReady
+    },
+  },
+  async created() {
+    const userStore = useUserStore()
+    await userStore.initAuth()
+  },
 }
 </script>
+
+<template>
+  <main v-if="authReady" class="w-full h-screen bg-ribbook-red flex flex-col overflow-hidden">
+    <TopHeaderBar v-if="userLoggedIn" />
+
+    <section class="flex-1 overflow-auto">
+      <router-view />
+    </section>
+
+    <BottomNavBar v-if="userLoggedIn" />
+  </main>
+</template>
