@@ -18,7 +18,7 @@ const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
 const storage = getStorage(firebaseApp)
 
-const userCollection = collection(db, 'users')
-// const postCollection = collection(db, 'posts')
+// const userCollection = collection(db, 'users')
+const postCollection = collection(db, 'posts')
 
-export { auth, db, storage, userCollection }
+export { auth, db, storage, postCollection }

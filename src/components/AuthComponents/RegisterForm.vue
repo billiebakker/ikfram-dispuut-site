@@ -65,7 +65,7 @@ export default {
     >
       <!-- name -->
       <div class="w-full">
-        <label
+        <div
           class="w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray flex items-center"
         >
           <vee-field
@@ -74,13 +74,13 @@ export default {
             placeholder="Naam"
             class="w-full text-text-muted text-base font-normal focus:outline-none"
           />
-        </label>
+        </div>
         <ErrorMessage name="name" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
       <!--      email-->
       <div class="w-full">
-        <label
+        <div
           class="w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray flex items-center"
         >
           <vee-field
@@ -89,13 +89,13 @@ export default {
             placeholder="E-mailadres"
             class="w-full text-text-muted text-base font-normal focus:outline-none"
           />
-        </label>
+        </div>
         <ErrorMessage name="email" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
       <!-- password-->
       <div class="w-full">
-        <label
+        <div
           class="w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray flex items-center"
         >
           <vee-field
@@ -105,13 +105,13 @@ export default {
             class="w-full text-text-muted text-base font-normal focus:outline-none"
             validate-on-input
           />
-        </label>
+        </div>
         <ErrorMessage name="password" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 
       <!-- confirm -->
       <div class="w-full">
-        <label
+        <div
           class="flex w-full h-[42px] bg-white rounded-[5px] px-3.5 py-[5px] outline outline-2 outline-main-medium-gray items-center"
         >
           <vee-field
@@ -120,7 +120,7 @@ export default {
             placeholder="Bevestig wachtwoord"
             class="w-full text-text-muted text-base font-normal focus:outline-none"
           />
-        </label>
+        </div>
         <ErrorMessage name="confirm_password" class="text-ribbook-yellow text-sm mt-1 block" />
       </div>
 

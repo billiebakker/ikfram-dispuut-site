@@ -1,42 +1,90 @@
 <script>
+import { addDoc } from 'firebase/firestore'
+import { auth, postCollection } from '@/includes/firebase.js'
+
 export default {
   name: 'NewPostInput',
+  data() {
+    return {
+      postSchema: {
+        postText: 'min:2|max:400',
+      },
+    }
+  },
+  methods: {
+    autoResize(e) {
+      const textarea = e.target
+      textarea.style.height = 'auto' // eerst resetten
+      textarea.style.height = textarea.scrollHeight + 'px'
+    },
+
+    async submitPost(values, { resetForm }) {
+      this.post_in_submission = true
+      this.post_show_alert = true
+      this.post_alert_variant = 'bg-ribbook-pink'
+      this.post_alert_msg = 'ok wacht even...'
+
+      const post = {
+        postText: values.postText,
+        datePosted: new Date().toISOString(),
+        uid: auth.currentUser.uid,
+        userDisplayName: auth.currentUser.displayName,
+        //   TODO als er foto of zo is
+      }
+
+      //   toevoegen aan db
+      // await addDoc(collection(db, 'posts'), post)
+      await addDoc(postCollection, post)
+
+      // await getPosts , dit moet emitten denk ik
+
+      this.post_in_submission = false
+      this.post_alert_variant = 'bg-green-500'
+      this.post_alert_msg = 'yay gelukt!'
+
+      resetForm()
+    },
+  },
 }
 </script>
 
 <template>
-  <!-- Post input section -->
-  <!--  TODO icon Send-->
-
   <section
     class="max-w-[480px] w-full py-[5px] bg-white rounded-[13px] outline outline-[3px] outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
-    <!-- Avatar + input field -->
-    <div class="w-full px-1.5 flex items-center gap-2.5">
+    <!-- pf + input container -->
+    <div class="mt-0.5 w-full px-1.5 flex gap-2.5">
+      <!--      pf-->
       <div class="py-1">
+        <!--        TODO replace with pf-->
         <div class="w-[46px] h-[46px] bg-ribbook-pink rounded-full"></div>
       </div>
-      <div
-        class="flex-1 px-5 py-2 bg-[--color-bg-light] rounded-[20px] flex items-center overflow-hidden"
-      >
-        <p class="text-[--color-text-muted] text-base font-normal font-roboto">Maak een post...</p>
-      </div>
-      <button
-        class="px-2.5 py-[5px] bg-ribbook-red rounded-[9px] flex items-center gap-[9px] overflow-hidden"
-      >
-        <span class="icon icon-yellow">Send</span>
-      </button>
+
+      <!--      input -->
+      <vee-form @submit="submitPost" :validation-schema="postSchema" class="flex-1 flex">
+        <vee-field
+          as="textarea"
+          name="postText"
+          placeholder="max 400 tekens...."
+          class="w-full resize-none px-3 py-2 text-text-muted bg-bg-light rounded-[12px] text-base font-normal font-roboto focus:outline-none"
+          @input="autoResize"
+        ></vee-field>
+
+        <button
+          type="submit"
+          class="px-2.5 m-1 ml-1.5 py-0.5 h-10 bg-ribbook-red rounded-[9px] flex items-center gap-[9px] overflow-hidden"
+        >
+          <span class="icon icon-yellow">Send</span>
+        </button>
+      </vee-form>
     </div>
 
     <!-- Post options -->
-    <div class="w-full px-[52px] py-[3px] flex flex-col items-start gap-[5px] overflow-hidden">
+    <!--    todo link options: foto toevoegen, link, tags.
+    zie post item button styling-->
+    <div class="w-full px-[52px] py-[3px] flex flex-col items-start gap-[5px]">
       <div class="w-full px-[141px] flex justify-between items-center">
         <div class="flex items-center gap-1 overflow-hidden">
-          <div class="w-[22px] h-[22px] relative overflow-hidden">
-            <div
-              class="w-[20.18px] h-[18.33px] absolute left-[0.91px] top-[1.83px] bg-[--color-text-muted]"
-            ></div>
-          </div>
           <span class="text-[--color-text-muted] text-base font-normal font-roboto">Opties...</span>
         </div>
       </div>

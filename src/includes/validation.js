@@ -35,11 +35,11 @@ export default {
     configure({
       generateMessage: (ctx) => {
         const fieldNames = {
-          naam: 'Naam',
+          name: 'Naam',
           email: 'E-mailadres',
-          age: 'Leeftijd',
           password: 'Wachtwoord',
           confirm_password: 'Wachtwoord bevestigen',
+          postText: 'je post',
         }
 
         const messages = {
