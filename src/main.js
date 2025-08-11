@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import timeago from 'vue-timeago3'
+import { nl } from 'date-fns/locale'
 
 import App from './App.vue'
 import router from './router'
@@ -18,6 +20,9 @@ auth.onAuthStateChanged(() => {
   app.use(createPinia())
   app.use(router)
   app.use(VeeValidatePlugin)
+  app.use(timeago, {
+    locale: nl,
+  })
 
   app.mount('#app')
 })

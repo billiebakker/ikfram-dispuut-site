@@ -20,7 +20,7 @@ export default {
             {{ post.userDisplayName }}
           </h2>
           <p class="text-[#4f4f4f] text-sm font-normal font-roboto">
-            {{ post.datePosted }}
+            <timeago :datetime="post.datePosted" />
           </p>
         </div>
       </div>
