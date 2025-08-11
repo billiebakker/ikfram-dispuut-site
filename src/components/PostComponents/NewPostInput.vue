@@ -1,14 +1,20 @@
 <script>
 import { addDoc } from 'firebase/firestore'
 import { auth, postCollection } from '@/includes/firebase.js'
+import { ErrorMessage } from 'vee-validate'
 
 export default {
   name: 'NewPostInput',
+  components: { ErrorMessage },
   data() {
     return {
       postSchema: {
         postText: 'min:2|max:400',
       },
+      post_in_submission: false,
+      post_show_alert: false,
+      post_alert_variant: 'bg-blue-800',
+      post_alert_msg: 'even wachten...',
     }
   },
   methods: {
@@ -40,7 +46,7 @@ export default {
 
       this.post_in_submission = false
       this.post_alert_variant = 'bg-green-500'
-      this.post_alert_msg = 'yay gelukt!'
+      this.post_alert_msg = 'ja gelukt!'
 
       resetForm()
     },
@@ -62,17 +68,22 @@ export default {
 
       <!--      input -->
       <vee-form @submit="submitPost" :validation-schema="postSchema" class="flex-1 flex">
-        <vee-field
-          as="textarea"
-          name="postText"
-          placeholder="max 400 tekens...."
-          class="w-full resize-none px-3 py-2 text-text-muted bg-bg-light rounded-[12px] text-base font-normal font-roboto focus:outline-none"
-          @input="autoResize"
-        ></vee-field>
-
+        <div class="w-full">
+          <vee-field
+            as="textarea"
+            name="postText"
+            placeholder="max 400 tekens...."
+            class="w-full resize-none px-3 py-2 text-text-muted bg-bg-light rounded-[12px] text-base font-normal font-roboto focus:outline-none"
+            @input="autoResize"
+          ></vee-field>
+          <ErrorMessage name="postText" class="text-ribbook-red text-sm mt-1 block" />
+          <div class="w-full px-1.5 flex gap-2.5 rounded-md" :class="post_alert_variant">
+            {{ post_alert_msg }}
+          </div>
+        </div>
         <button
           type="submit"
-          class="px-2.5 m-1 ml-1.5 py-0.5 h-10 bg-ribbook-red rounded-[9px] flex items-center gap-[9px] overflow-hidden"
+          class="px-2.5 ml-1.5 mt-0 py-0.5 h-10 bg-ribbook-red rounded-[9px] flex items-center gap-[9px] overflow-hidden"
         >
           <span class="icon icon-yellow">Send</span>
         </button>
