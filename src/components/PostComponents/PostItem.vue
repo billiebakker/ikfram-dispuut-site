@@ -38,19 +38,25 @@ export default {
       <!-- Comments -->
       <div class="flex items-center gap-1">
         <span class="icon icon-500 icon-gray">Chat_Bubble</span>
-        <span class="text-comment-stats">3</span>
+        <span class="text-comment-stats">
+          {{ post.commentCount }}
+        </span>
       </div>
 
       <!-- Likes -->
       <div class="flex items-center gap-1">
         <span class="icon icon-500 icon-gray">Handshake</span>
-        <span class="text-comment-stats">4</span>
+        <span class="text-comment-stats">
+          {{ post.likeCount }}
+        </span>
       </div>
 
       <!-- Shares -->
       <div class="flex items-center gap-1">
         <span class="icon icon-500 icon-gray">Gavel</span>
-        <span class="text-comment-stats">8</span>
+        <span class="text-comment-stats">
+          {{ post.dislikeCount }}
+        </span>
       </div>
     </footer>
   </section>

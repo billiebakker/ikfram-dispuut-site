@@ -4,8 +4,9 @@ import { auth, postCollection } from '@/includes/firebase.js'
 import { ErrorMessage } from 'vee-validate'
 
 export default {
-  name: 'NewPostInput',
+  name: 'CreatePost',
   components: { ErrorMessage },
+  emits: ['newPostSubmitted'],
   data() {
     return {
       postSchema: {
@@ -35,20 +36,20 @@ export default {
         datePosted: new Date().toISOString(),
         uid: auth.currentUser.uid,
         userDisplayName: auth.currentUser.displayName,
-        //   TODO als er foto of zo is
+        commentCount: 0,
+        likeCount: 0,
+        dislikeCount: 0,
       }
 
       //   toevoegen aan db
-      // await addDoc(collection(db, 'posts'), post)
       await addDoc(postCollection, post)
-
-      // await getPosts , dit moet emitten denk ik
 
       this.post_in_submission = false
       this.post_alert_variant = 'bg-green-500'
-      this.post_alert_msg = 'ja gelukt!'
+      this.post_alert_msg = 'yay gepost!'
 
       resetForm()
+      this.$emit('newPostSubmitted')
     },
   },
 }
@@ -77,7 +78,11 @@ export default {
             @input="autoResize"
           ></vee-field>
           <ErrorMessage name="postText" class="text-ribbook-red text-sm mt-1 block" />
-          <div class="w-full px-1.5 flex gap-2.5 rounded-md" :class="post_alert_variant">
+          <div
+            v-show="post_show_alert"
+            class="w-full px-1.5 flex gap-2.5 rounded-md"
+            :class="post_alert_variant"
+          >
             {{ post_alert_msg }}
           </div>
         </div>
@@ -93,13 +98,13 @@ export default {
     <!-- Post options -->
     <!--    todo link options: foto toevoegen, link, tags.
     zie post item button styling-->
-    <div class="w-full px-[52px] py-[3px] flex flex-col items-start gap-[5px]">
-      <div class="w-full px-[141px] flex justify-between items-center">
-        <div class="flex items-center gap-1 overflow-hidden">
-          <span class="text-[--color-text-muted] text-base font-normal font-roboto">Opties...</span>
-        </div>
-      </div>
-    </div>
+    <!--    <div class="w-full px-[52px] py-[3px] flex flex-col items-start gap-[5px]">-->
+    <!--      <div class="w-full px-[141px] flex justify-between items-center">-->
+    <!--        <div class="flex items-center gap-1 overflow-hidden">-->
+    <!--          <span class="text-[&#45;&#45;color-text-muted] text-base font-normal font-roboto">Opties...</span>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
   </section>
 </template>
 
