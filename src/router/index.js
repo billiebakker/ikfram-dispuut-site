@@ -4,6 +4,7 @@ import AuthView from '@/views/AuthView.vue'
 import ActivitiesView from '@/views/ActivitiesView.vue'
 import AccountView from '@/views/AccountView.vue'
 import useUserStore from '@/stores/user'
+import PostDetailsView from '@/views/PostDetailsView.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     name: 'account',
     path: '/account',
     component: AccountView,
+  },
+  {
+    name: 'post-detail',
+    path: '/post/:id',
+    component: PostDetailsView,
   },
   {
     name: 'NotFound',

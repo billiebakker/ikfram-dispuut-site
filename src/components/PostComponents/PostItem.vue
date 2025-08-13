@@ -1,10 +1,17 @@
 <script>
+import router from '@/router/index.js'
+
 export default {
   name: 'PostItem',
   props: {
     post: Object,
   },
   emits: ['toggle-like', 'toggle-dislike'],
+  methods: {
+    goToPost() {
+      router.push({ name: 'post-detail', params: { id: this.post.docID } })
+    },
+  },
 }
 </script>
 
@@ -13,13 +20,13 @@ export default {
     class="max-w-[480px] w-full bg-white rounded-[13px] outline outline-[3px] outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
     <!--    pf, naam, tijd-->
-    <header class="w-full flex flex-col items-center gap-[5px]">
+    <header class="w-full flex flex-col items-center gap-[5px]" @click="goToPost">
       <div class="w-full h-[54px] pl-1.5 pr-[22px] flex items-center gap-1 overflow-hidden">
         <!--        vervang dit met pf-->
         <div class="w-[46px] h-[46px] bg-ribbook-pink rounded-full"></div>
         <div class="px-[9px] flex items-center gap-6 overflow-hidden">
           <h2 class="text-black text-base font-semibold font-roboto">
-            {{ post.userDisplayName }}
+            {{ post.userDisplayName || 'Onbekend' }}
           </h2>
           <p class="text-[#4f4f4f] text-sm font-normal font-roboto">
             <timeago :datetime="post.datePosted" />
@@ -29,7 +36,10 @@ export default {
     </header>
 
     <!-- post text -->
-    <article class="w-full px-3 py-[5px] flex flex-col items-center gap-[13px] overflow-hidden">
+    <article
+      class="w-full px-3 py-[5px] flex flex-col items-center gap-[13px] overflow-hidden"
+      @click="goToPost"
+    >
       <p class="w-full text-black text-base font-normal font-roboto">
         {{ post.postText }}
       </p>
