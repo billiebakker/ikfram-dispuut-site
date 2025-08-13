@@ -7,8 +7,8 @@ import useUserStore from '@/stores/user'
 
 const routes = [
   {
-    path: '/home',
     name: 'home',
+    path: '/home',
     component: HomeView,
   },
   {
@@ -17,19 +17,24 @@ const routes = [
     redirect: { name: 'home' },
   },
   {
-    path: '/login',
     name: 'login',
+    path: '/login',
     component: AuthView,
   },
   {
-    path: '/activiteiten',
     name: 'activities',
+    path: '/activiteiten',
     component: ActivitiesView,
   },
   {
-    path: '/account',
     name: 'account',
+    path: '/account',
     component: AccountView,
+  },
+  {
+    name: 'NotFound',
+    path: '/:pathMatch(.*)*',
+    redirect: { name: 'home' },
   },
 ]
 
