@@ -69,13 +69,22 @@ export default defineStore('posts', {
     },
 
     async fetchPostById(id) {
+      const uid = useUserStore().currentUser?.uid || null
+
       const cached = this.posts.find((p) => p.docID === id)
       if (cached) return cached
 
       const snap = await getDoc(doc(db, 'posts', id))
       if (!snap.exists()) return null
 
-      const post = { docID: snap.id, ...snap.data() }
+      const data = snap.data()
+      const post = {
+        docID: snap.id,
+        ...data,
+        liked: uid ? data.reactions?.[uid] === 'like' : false,
+        disliked: uid ? data.reactions?.[uid] === 'dislike' : false,
+      }
+
       this.posts.push(post)
       return post
     },
