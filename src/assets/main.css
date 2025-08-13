@@ -18,9 +18,7 @@
 }
 
 .text-comment-stats {
-  color: var(--color-text-muted);
   font-size: 15px;
-  font-weight: normal;
   font-family: 'roboto', sans-serif;
 }
 
