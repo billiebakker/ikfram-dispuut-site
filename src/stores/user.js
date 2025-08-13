@@ -12,6 +12,7 @@ export default defineStore('user', {
   state: () => ({
     userLoggedIn: false,
     authReady: false,
+    currentUser: null,
   }),
   actions: {
     async register(values) {
@@ -29,22 +30,26 @@ export default defineStore('user', {
         displayName: values.name,
       })
 
+      this.currentUser = userCred.user
       this.userLoggedIn = true
     },
 
     async authenticate(values) {
-      await signInWithEmailAndPassword(auth, values.email, values.password)
+      const userCred = await signInWithEmailAndPassword(auth, values.email, values.password)
+      this.currentUser = userCred.user
       this.userLoggedIn = true
     },
 
     async logout() {
       await auth.signOut()
+      this.currentUser = null
       this.userLoggedIn = false
     },
 
     initAuth() {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, (user) => {
+          this.currentUser = user
           this.userLoggedIn = !!user
           this.authReady = true
           resolve()

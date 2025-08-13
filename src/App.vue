@@ -25,12 +25,10 @@ export default {
 </script>
 
 <template>
-  <main v-if="authReady" class="w-full h-screen bg-ribbook-red flex flex-col overflow-hidden">
+  <main v-if="authReady" class="w-full h-screen bg-ribbook-red flex flex-col">
     <TopHeaderBar v-if="userLoggedIn" />
 
-    <section class="flex-1 overflow-auto">
-      <router-view />
-    </section>
+    <router-view class="flex-1" />
 
     <BottomNavBar v-if="userLoggedIn" />
   </main>
