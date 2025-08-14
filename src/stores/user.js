@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { auth, db } from '@/includes/firebase.js'
+import usePostsStore from '@/stores/posts'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -44,6 +45,7 @@ export default defineStore('user', {
       await auth.signOut()
       this.currentUser = null
       this.userLoggedIn = false
+      await usePostsStore().resetPosts()
     },
 
     initAuth() {
