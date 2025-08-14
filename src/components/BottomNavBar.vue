@@ -32,7 +32,7 @@ export default {
     return {
       navItems: [
         { name: 'home', icon_label: 'Home' },
-        { name: 'activities', icon_label: 'Event' },
+        { name: 'events', icon_label: 'Event' },
         { name: 'account', icon_label: 'Person' },
       ],
     }

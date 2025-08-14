@@ -15,7 +15,7 @@ export default {
       // dynamische titel op basis van route
       const map = {
         home: 'Ribbook',
-        activities: 'Activiteiten',
+        events: 'Activiteiten',
         account: 'Account',
       }
       // Ribbook als geen match

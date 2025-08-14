@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import AuthView from '@/views/AuthView.vue'
-import ActivitiesView from '@/views/ActivitiesView.vue'
+import EventsView from '@/views/EventsView.vue'
 import AccountView from '@/views/AccountView.vue'
 import useUserStore from '@/stores/user'
 import PostDetailsView from '@/views/PostDetailsView.vue'
@@ -23,9 +23,9 @@ const routes = [
     component: AuthView,
   },
   {
-    name: 'activities',
+    name: 'events',
     path: '/activiteiten',
-    component: ActivitiesView,
+    component: EventsView,
   },
   {
     name: 'account',
