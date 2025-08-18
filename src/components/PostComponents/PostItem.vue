@@ -46,7 +46,7 @@ export default {
     </article>
 
     <!--    footer met knoppen-->
-    <footer class="w-full px-[25px] py-1 flex justify-between items-center">
+    <footer class="w-full px-6 py-1 flex justify-between items-center">
       <!-- comments -->
       <button
         class="w-20 h-10 rounded-full flex items-center justify-center gap-1 hover:bg-bg-light transition-all duration-200 ease-in-out"
