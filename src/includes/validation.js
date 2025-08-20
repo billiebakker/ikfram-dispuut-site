@@ -40,6 +40,11 @@ export default {
           password: 'Wachtwoord',
           confirm_password: 'Wachtwoord bevestigen',
           postText: 'je post',
+          date: 'Datum',
+          time: 'Tijd',
+          title: 'Titel',
+          foodOption: 'Eten keuze',
+          description: 'Beschrijving',
         }
 
         const messages = {

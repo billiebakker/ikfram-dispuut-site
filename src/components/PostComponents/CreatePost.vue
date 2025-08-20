@@ -59,7 +59,6 @@ export default {
   <section
     class="max-w-[480px] w-full py-[5px] bg-white rounded-[13px] outline outline-[3px] outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
-    <!-- pf + input container -->
     <div class="mt-0.5 w-full px-1.5 flex gap-2.5">
       <!--      pf-->
       <div class="py-1">
