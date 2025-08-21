@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { db, eventCollection } from '@/includes/firebase'
-import { doc, getDoc, getDocs, limit, orderBy, query, startAfter } from 'firebase/firestore'
+import { doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore'
 
 export default defineStore('events', {
   state: () => ({
@@ -9,23 +9,60 @@ export default defineStore('events', {
     noMoreEvents: false,
     pendingRequest: false,
     maxEventsPerPage: 4,
+    showArchive: false,
+    sortAscending: false,
   }),
   actions: {
+    toggleSort() {
+      this.sortAscending = !this.sortAscending
+      this.refreshEvents()
+    },
+    async toggleArchive() {
+      this.showArchive = !this.showArchive
+      await this.refreshEvents()
+    },
     async fetchEvents() {
       if (this.pendingRequest || this.noMoreEvents) return
       this.pendingRequest = true
 
-      // const uid = useUserStore().currentUser?.uid || null
+      const now = new Date()
+      const eightHoursAgo = new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString()
 
-      const q = this.lastDoc
-        ? query(
-            eventCollection,
-            orderBy('datePosted', 'desc'),
-            startAfter(this.lastDoc),
-            limit(this.maxEventsPerPage),
-          )
-        : query(eventCollection, orderBy('datePosted', 'desc'), limit(this.maxEventsPerPage))
+      const sortDirection = this.sortAscending ? 'asc' : 'desc'
 
+      let q
+
+      if (this.showArchive) {
+        q = this.lastDoc
+          ? query(
+              eventCollection,
+              orderBy('date', sortDirection),
+              startAfter(this.lastDoc),
+              where('date', '<', eightHoursAgo), // 👈 only past events
+              limit(this.maxEventsPerPage),
+            )
+          : query(
+              eventCollection,
+              orderBy('date', sortDirection),
+              where('date', '<', eightHoursAgo),
+              limit(this.maxEventsPerPage),
+            )
+      } else {
+        q = this.lastDoc
+          ? query(
+              eventCollection,
+              orderBy('date', sortDirection),
+              startAfter(this.lastDoc),
+              where('date', '>=', eightHoursAgo), // 👈 upcoming + last 8h
+              limit(this.maxEventsPerPage),
+            )
+          : query(
+              eventCollection,
+              orderBy('date', sortDirection),
+              where('date', '>=', eightHoursAgo),
+              limit(this.maxEventsPerPage),
+            )
+      }
       const snapshot = await getDocs(q)
 
       if (!snapshot.empty) {

@@ -16,6 +16,12 @@ export default defineComponent({
     noMoreEvents() {
       return useEventsStore().noMoreEvents
     },
+    archiveActive() {
+      return useEventsStore().showArchive
+    },
+    sortAscending() {
+      return useEventsStore().sortAscending
+    },
     loadMoreButtonText() {
       if (this.noMoreEvents) return 'dat was het!'
       if (this.pendingRequest) return 'aan het laden...'
@@ -28,6 +34,12 @@ export default defineComponent({
     },
     refreshEvents() {
       useEventsStore().refreshEvents()
+    },
+    toggleArchive() {
+      useEventsStore().toggleArchive()
+    },
+    toggleSort() {
+      useEventsStore().toggleSort()
     },
     handleScroll(e) {
       const el = e.target
@@ -52,8 +64,13 @@ export default defineComponent({
     <section
       class="max-w-[520px] py-3 px-5 w-full rounded-xl outline-ribbook-yellow flex flex-row flex-wrap items-center justify-between gap-2.5"
     >
-      <button class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg">
-        <span class="icon icon-yellow">Arrow_Upward</span>
+      <button
+        @click="toggleSort"
+        class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg"
+      >
+        <span class="icon icon-yellow">{{
+          this.sortAscending ? 'Arrow_Upward' : 'Arrow_Downward'
+        }}</span>
         <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Eerstvolgende</span>
       </button>
       <router-link
@@ -63,9 +80,14 @@ export default defineComponent({
         <span class="icon icon-yellow">Add_Ad</span>
         <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Nieuw</span>
       </router-link>
-      <button class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg">
-        <span class="icon icon-yellow">History</span>
-        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Archief</span>
+      <button
+        @click="toggleArchive"
+        class="flex w-20 gap-1 justify-left items-center bg-ribbook-red rounded-lg"
+      >
+        <span class="icon icon-yellow">{{ this.archiveActive ? 'History_Off' : 'History' }}</span>
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">
+          {{ this.archiveActive ? 'Terug' : 'Archief' }}
+        </span>
       </button>
     </section>
 
