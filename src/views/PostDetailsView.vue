@@ -31,6 +31,7 @@ export default {
 <template>
   <div class="w-full flex-1 px-2.5 py-1 flex flex-col items-center gap-2.5 overflow-auto">
     <div v-if="pendingRequest">Aan het laden...</div>
+    <!--    todo betere error handling-->
     <div v-else-if="error">{{ error }}</div>
     <PostItem
       v-else
