@@ -1,36 +1,52 @@
 <script>
 import { defineComponent } from 'vue'
 import EventItem from '@/components/EventComponents/EventItem.vue'
+import useEventsStore from '@/stores/events'
 
 export default defineComponent({
   name: 'EventsView',
   components: { EventItem },
-  data() {
-    return {
-      event: {
-        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        signupDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-
-        authorDisplayName: 'Onbekend',
-        datePosted: new Date().toISOString(),
-        description:
-          'Hallo, ben je bestuur? Klik weg! Hang op! Bel je bank! Ben je geen bestuur, welkom  ' +
-          'rredacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted redacted edacted ',
-
-        title: 'Activiteit naaaaaaaaaaaaaaaaaaaaam',
-        headerImage: 'https://placehold.co/484x123',
-
-        commentCount: 0,
-        attendeeCount: 34,
-      },
-    }
+  computed: {
+    events() {
+      return useEventsStore().events
+    },
+    pendingRequest() {
+      return useEventsStore().pendingRequest
+    },
+    noMoreEvents() {
+      return useEventsStore().noMoreEvents
+    },
+    loadMoreButtonText() {
+      if (this.noMoreEvents) return 'dat was het!'
+      if (this.pendingRequest) return 'aan het laden...'
+      return 'meer laden'
+    },
+  },
+  methods: {
+    getEvents() {
+      useEventsStore().fetchEvents()
+    },
+    refreshEvents() {
+      useEventsStore().refreshEvents()
+    },
+    handleScroll(e) {
+      const el = e.target
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
+        this.getEvents()
+      }
+    },
+  },
+  async created() {
+    await this.getEvents()
   },
 })
 </script>
 
 <template>
   <div
+    ref="scrollContainer"
     class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5 overflow-auto"
+    @scroll="handleScroll"
   >
     <!--    knoppen-->
     <section
@@ -53,6 +69,12 @@ export default defineComponent({
       </button>
     </section>
 
-    <EventItem :event="event" />
+    <EventItem v-for="event in events" :key="event.docID" :event="event" />
+    <button
+      class="w-[224px] h-[42px] rounded outline outline-2 outline-offset-[-1px] outline-ribbook-yellow text-ribbook-yellow flex justify-center items-center gap-2.5"
+      @click="getEvents"
+    >
+      {{ loadMoreButtonText }}
+    </button>
   </div>
 </template>

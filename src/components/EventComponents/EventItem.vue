@@ -25,13 +25,20 @@ export default {
 <template>
   <section
     class="max-w-[520px] w-full bg-white rounded-xl outline outline-3 outline-ribbook-yellow flex flex-col items-center"
+    @click="goToEventDetail"
   >
     <!--    event naam, timeto, sluit over [tijd]-->
     <header class="w-full px-2 py-1.5 inline-flex flex-col items-end gap-1">
       <p class="text-main-medium-gray text-sm font-normal font-roboto">
-        <timeago :datetime="event.date" />
+        {{
+          new Date(event.date).toLocaleDateString('nl-NL', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+          })
+        }}
       </p>
-      <h1 class="text-right font-semibold font-roboto">
+      <h1 class="text-right font-semibold font-roboto text-2xl">
         {{ event.title }}
       </h1>
       <p class="text-main-medium-gray text-sm font-normal font-roboto">
@@ -70,13 +77,7 @@ export default {
       <div class="flex items-center justify-center gap-1">
         <span class="icon icon-gray icon-400">Calendar_Month</span>
         <span class="text-comment-stats text-text-muted font-normal">
-          {{
-            new Date(event.date).toLocaleDateString('nl-NL', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            })
-          }}
+          <timeago :datetime="event.date" />
         </span>
       </div>
       <!--      aantal ingeschreven -->

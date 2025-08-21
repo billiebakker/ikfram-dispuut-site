@@ -40,7 +40,7 @@ export default {
     },
   },
   async created() {
-    await usePostsStore().fetchPosts()
+    await this.getPosts()
   },
 }
 </script>

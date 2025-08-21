@@ -4,6 +4,7 @@ import { auth, eventCollection } from '@/includes/firebase.js'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { addDoc } from 'firebase/firestore'
+import useEventsStore from '@/stores/events'
 
 export default {
   name: 'CreateEventView',
@@ -40,7 +41,7 @@ export default {
       textarea.style.height = 'auto' // eerst resetten
       textarea.style.height = textarea.scrollHeight + 'px'
     },
-    async submitEvent(values, { resetForm }) {
+    async submitEvent(values) {
       console.log(values)
       this.event_in_submission = true
       this.event_show_alert = true
@@ -77,9 +78,9 @@ export default {
       this.event_alert_variant = 'bg-green-500'
       this.event_alert_msg = 'event is aangemaakt!'
 
+      await useEventsStore().refreshEvents()
+
       this.$router.push({ name: 'events' })
-      // onnodig wss
-      resetForm()
     },
   },
 }
@@ -275,7 +276,7 @@ export default {
         <!--          submit-->
         <button
           type="submit"
-          class="px-2.5 my-1 h-10 bg-ribbook-red rounded-lg flex items-center gap-3 justify-center"
+          class="px-2.5 my-1 h-10 bg-ribbook-red rounded-lg flex items-center gap-3 justify-center cursor-pointer"
         >
           <span class="text-sm font-semibold font-roboto text-ribbook-yellow"
             >Activiteit aanmaken!</span
