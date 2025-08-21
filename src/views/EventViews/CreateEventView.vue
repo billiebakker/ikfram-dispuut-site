@@ -14,7 +14,8 @@ export default {
     return {
       eventSchema: {
         title: 'required|min:3|max:100',
-        description: 'required|min:3|max:600',
+        description: 'required|min:2|max:1200',
+        location: 'required|min:2|max:100',
         date: 'required',
         deadlineInHoursToEvent: 'required',
         foodOption: 'required',
@@ -42,7 +43,6 @@ export default {
       textarea.style.height = textarea.scrollHeight + 'px'
     },
     async submitEvent(values) {
-      console.log(values)
       this.event_in_submission = true
       this.event_show_alert = true
       this.event_alert_variant = 'bg-ribbook-pink'
@@ -59,6 +59,7 @@ export default {
         signupDeadline: signupDeadline.toISOString(),
 
         headerImage: 'https://placehold.co/484x123',
+        location: values.location,
 
         datePosted: new Date().toISOString(),
         // userDisplayName: auth.currentUser.userDisplayName,
@@ -72,7 +73,6 @@ export default {
 
       //   toevoegen aan db
       await addDoc(eventCollection, event)
-      // console.log(event)
 
       this.event_in_submission = false
       this.event_alert_variant = 'bg-green-500'
@@ -124,6 +124,16 @@ export default {
             @input="autoResize"
           ></vee-field>
           <ErrorMessage name="description" class="text-ribbook-red text-sm mt-1 block" />
+        </div>
+
+        <div>
+          <label for="location">Locatie</label>
+          <vee-field
+            name="location"
+            placeholder="waar? of digitaal maybe (cringe)?"
+            class="w-full resize-none px-3 py-2 text-text-muted bg-bg-light rounded-lg text-base font-normal font-roboto focus:outline-none"
+          ></vee-field>
+          <ErrorMessage name="location" class="text-ribbook-red text-sm mt-1 block" />
         </div>
 
         <!-- datum en tijd -->

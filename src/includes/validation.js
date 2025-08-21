@@ -44,6 +44,7 @@ export default {
           title: 'Titel',
           foodOption: 'Eten keuze',
           description: 'Beschrijving',
+          location: 'Locatie',
         }
 
         const messages = {
