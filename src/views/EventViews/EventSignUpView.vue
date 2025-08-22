@@ -1,6 +1,7 @@
 <script>
 import useEventsStore from '@/stores/events.js'
 import { ErrorMessage } from 'vee-validate'
+import router from '@/router/index.js'
 
 export default {
   name: 'EventSignUpView',
@@ -23,8 +24,26 @@ export default {
     }
   },
   methods: {
-    submitSignUp() {
-      useEventsStore().signUp(this.event)
+    async submitSignUp(values) {
+      try {
+        this.signup_in_submission = true
+        this.signup_show_alert = true
+        this.signup_alert_variant = 'bg-blue-800'
+        this.signup_alert_msg = 'even wachten...'
+
+        await useEventsStore().signUp(this.event, values)
+
+        this.signup_in_submission = false
+        this.signup_alert_variant = 'bg-green-500'
+        this.signup_alert_msg = 'Yay gelukt!'
+
+        await router.push({ name: 'event-detail', params: { id: this.event.docID } })
+      } catch (error) {
+        console.error(error)
+        this.signup_in_submission = false
+        this.signup_alert_variant = 'bg-red-500'
+        this.signup_alert_msg = 'Er is een fout opgetreden :((('
+      }
     },
   },
   async created() {

@@ -1,6 +1,16 @@
 import { defineStore } from 'pinia'
-import { db, eventCollection } from '@/includes/firebase'
-import { doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore'
+import { auth, db, eventCollection } from '@/includes/firebase'
+import {
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 
 export default defineStore('events', {
   state: () => ({
@@ -13,7 +23,34 @@ export default defineStore('events', {
     sortAscending: true,
   }),
   actions: {
-    signUp(event) {},
+    async signUp(event, formValues) {
+      if (!auth.currentUser) {
+        throw new Error('User must be logged in to sign up')
+      }
+
+      const uid = auth.currentUser.uid
+
+      const signupData = {
+        name: auth.currentUser.name,
+        displayName: auth.currentUser.displayName,
+        foodChoice: formValues.foodChoice || null,
+        drinkChoice: formValues.drinkChoice || null,
+        allergies: formValues.allergies || null,
+      }
+
+      const eventRef = doc(db, 'events', event.docID)
+
+      await updateDoc(eventRef, {
+        [`signUps.${uid}`]: signupData,
+      })
+
+      // cached event opslaan lokaal
+      const cached = this.events.find((p) => p.docID === event.docID)
+      if (cached) {
+        if (!cached.signUps) cached.signUps = {}
+        cached.signUps[uid] = signupData
+      }
+    },
     toggleSort() {
       this.sortAscending = !this.sortAscending
       this.refreshEvents()
