@@ -10,9 +10,10 @@ export default defineStore('events', {
     pendingRequest: false,
     maxEventsPerPage: 4,
     showArchive: false,
-    sortAscending: false,
+    sortAscending: true,
   }),
   actions: {
+    signUp(event) {},
     toggleSort() {
       this.sortAscending = !this.sortAscending
       this.refreshEvents()
