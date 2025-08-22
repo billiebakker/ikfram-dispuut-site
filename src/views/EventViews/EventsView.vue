@@ -9,6 +9,7 @@ export default defineComponent({
   data() {
     return {
       scrollParent: null,
+      scrollHandler: null,
     }
   },
   computed: {
@@ -46,26 +47,52 @@ export default defineComponent({
     toggleSort() {
       useEventsStore().toggleSort()
     },
-    handleScroll(e) {
-      const el = e.target
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
-        this.getEvents()
+    // ja vibe code helaas, scrolling lastig
+    getClosestScrollableParent(node) {
+      let el = node && node.nodeType === 1 ? node.parentElement : null
+      while (el && el !== document.body) {
+        const style = getComputedStyle(el)
+        const oy = style.overflowY
+        if (oy === 'auto' || oy === 'scroll' || oy === 'overlay') return el
+        el = el.parentElement
       }
+      return window // fallback to page scrolling
+    },
+    checkAndLoadMore() {
+      const el =
+        this.scrollParent === window
+          ? document.scrollingElement || document.documentElement
+          : this.scrollParent
+
+      if (!el) return
+      const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100
+
+      if (nearBottom) this.getEvents()
     },
   },
   async created() {
     await this.getEvents()
   },
   mounted() {
-    //   kopie van uit PostsList
-    this.scrollParent = document.querySelector('.flex-1.min-h-0.overflow-scroll')
-    if (this.scrollParent) {
-      this.scrollParent.addEventListener('scroll', this.handleScroll)
+    this.scrollParent = this.getClosestScrollableParent(this.$el)
+
+    // single handler reference for add/remove
+    this.scrollHandler = () => this.checkAndLoadMore()
+
+    if (this.scrollParent === window) {
+      window.addEventListener('scroll', this.scrollHandler, { passive: true })
+    } else if (this.scrollParent) {
+      this.scrollParent.addEventListener('scroll', this.scrollHandler, { passive: true })
     }
+
+    // run once in case we mount already near the bottom
+    this.$nextTick(() => this.checkAndLoadMore())
   },
   beforeUnmount() {
-    if (this.scrollParent) {
-      this.scrollParent.removeEventListener('scroll', this.handleScroll)
+    if (this.scrollParent === window) {
+      window.removeEventListener('scroll', this.scrollHandler)
+    } else if (this.scrollParent) {
+      this.scrollParent.removeEventListener('scroll', this.scrollHandler)
     }
   },
 })

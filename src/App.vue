@@ -28,7 +28,7 @@ export default {
   <main v-if="authReady" class="w-full h-screen bg-ribbook-red flex flex-col">
     <TopHeaderBar v-if="userLoggedIn" />
 
-    <div class="flex-1 min-h-0 overflow-scroll">
+    <div class="flex-1 min-h-0 overflow-y-scroll overflow-x-hidden">
       <router-view />
     </div>
 
