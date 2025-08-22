@@ -6,6 +6,11 @@ import usePostsStore from '@/stores/posts'
 export default {
   name: 'PostsList',
   components: { CreatePost, PostItem },
+  data() {
+    return {
+      scrollParent: null,
+    }
+  },
   computed: {
     posts() {
       return usePostsStore().posts
@@ -42,15 +47,24 @@ export default {
   async created() {
     await this.getPosts()
   },
+  mounted() {
+    // ja heel eerlijk dit is gevibed
+    // find the scrollable parent (the wrapper in App.vue)
+    this.scrollParent = document.querySelector('.flex-1.min-h-0.overflow-scroll')
+    if (this.scrollParent) {
+      this.scrollParent.addEventListener('scroll', this.handleScroll)
+    }
+  },
+  beforeUnmount() {
+    if (this.scrollParent) {
+      this.scrollParent.removeEventListener('scroll', this.handleScroll)
+    }
+  },
 }
 </script>
 
 <template>
-  <div
-    ref="scrollContainer"
-    class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5 overflow-auto"
-    @scroll="handleScroll"
-  >
+  <div class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5">
     <CreatePost @newPostSubmitted="refreshPosts" />
     <PostItem
       v-for="post in posts"

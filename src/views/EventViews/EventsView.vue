@@ -6,6 +6,11 @@ import useEventsStore from '@/stores/events'
 export default defineComponent({
   name: 'EventsView',
   components: { EventItem },
+  data() {
+    return {
+      scrollParent: null,
+    }
+  },
   computed: {
     events() {
       return useEventsStore().events
@@ -50,6 +55,18 @@ export default defineComponent({
   },
   async created() {
     await this.getEvents()
+  },
+  mounted() {
+    //   kopie van uit PostsList
+    this.scrollParent = document.querySelector('.flex-1.min-h-0.overflow-scroll')
+    if (this.scrollParent) {
+      this.scrollParent.addEventListener('scroll', this.handleScroll)
+    }
+  },
+  beforeUnmount() {
+    if (this.scrollParent) {
+      this.scrollParent.removeEventListener('scroll', this.handleScroll)
+    }
   },
 })
 </script>
