@@ -28,7 +28,7 @@ export default defineStore('user', {
       })
 
       await updateProfile(userCred.user, {
-        displayName: values.name,
+        userDisplayName: values.name,
       })
 
       this.currentUser = userCred.user

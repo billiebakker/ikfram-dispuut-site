@@ -1,0 +1,119 @@
+<script>
+import { defineComponent } from 'vue'
+import EventItem from '@/components/EventComponents/EventItem.vue'
+import useEventsStore from '@/stores/events'
+
+export default defineComponent({
+  name: 'EventsView',
+  components: { EventItem },
+  data() {
+    return {
+      scrollParent: null,
+    }
+  },
+  computed: {
+    events() {
+      return useEventsStore().events
+    },
+    pendingRequest() {
+      return useEventsStore().pendingRequest
+    },
+    noMoreEvents() {
+      return useEventsStore().noMoreEvents
+    },
+    archiveActive() {
+      return useEventsStore().showArchive
+    },
+    sortAscending() {
+      return useEventsStore().sortAscending
+    },
+    loadMoreButtonText() {
+      if (this.noMoreEvents) return 'dat was het!'
+      if (this.pendingRequest) return 'aan het laden...'
+      return 'meer laden'
+    },
+  },
+  methods: {
+    getEvents() {
+      useEventsStore().fetchEvents()
+    },
+    refreshEvents() {
+      useEventsStore().refreshEvents()
+    },
+    toggleArchive() {
+      useEventsStore().toggleArchive()
+    },
+    toggleSort() {
+      useEventsStore().toggleSort()
+    },
+    handleScroll(e) {
+      const el = e.target
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
+        this.getEvents()
+      }
+    },
+  },
+  async created() {
+    await this.getEvents()
+  },
+  mounted() {
+    //   kopie van uit PostsList
+    this.scrollParent = document.querySelector('.flex-1.min-h-0.overflow-scroll')
+    if (this.scrollParent) {
+      this.scrollParent.addEventListener('scroll', this.handleScroll)
+    }
+  },
+  beforeUnmount() {
+    if (this.scrollParent) {
+      this.scrollParent.removeEventListener('scroll', this.handleScroll)
+    }
+  },
+})
+</script>
+
+<template>
+  <div
+    ref="scrollContainer"
+    class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5 overflow-auto"
+    @scroll="handleScroll"
+  >
+    <!--    knoppen-->
+    <section
+      class="max-w-[520px] py-3 px-5 w-full rounded-xl outline-ribbook-yellow flex flex-row flex-wrap items-center justify-between gap-2.5"
+    >
+      <button
+        @click="toggleSort"
+        class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg"
+      >
+        <span class="icon icon-yellow">{{
+          this.sortAscending ? 'Arrow_Upward' : 'Arrow_Downward'
+        }}</span>
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Eerstvolgende</span>
+      </button>
+      <router-link
+        :to="{ name: 'create-event' }"
+        class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg"
+      >
+        <span class="icon icon-yellow">Add_Ad</span>
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Nieuw</span>
+      </router-link>
+      <button
+        @click="toggleArchive"
+        class="flex w-20 gap-1 justify-left items-center bg-ribbook-red rounded-lg"
+      >
+        <span class="icon icon-yellow">{{ this.archiveActive ? 'History_Off' : 'History' }}</span>
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">
+          {{ this.archiveActive ? 'Terug' : 'Archief' }}
+        </span>
+      </button>
+    </section>
+
+    <EventItem v-for="event in events" :key="event.docID" :event="event" />
+    <button
+      class="w-[224px] h-[42px] rounded outline outline-2 outline-offset-[-1px] outline-ribbook-yellow text-ribbook-yellow flex justify-center items-center gap-2.5"
+      @click="getEvents"
+    >
+      {{ loadMoreButtonText }}
+    </button>
+  </div>
+</template>
