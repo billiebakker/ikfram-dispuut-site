@@ -62,7 +62,7 @@ export default {
         location: values.location,
 
         datePosted: new Date().toISOString(),
-        // userDisplayName: auth.currentUser.userDisplayName,
+        userDisplayName: auth.currentUser.displayName,
         uid: auth.currentUser.uid,
         commentCount: 0,
         attendeeCount: 0,
