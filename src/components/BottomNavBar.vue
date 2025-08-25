@@ -11,11 +11,11 @@
         <a
           :href="href"
           @click="navigate"
-          class="flex-1 h-full flex flex-col justify-center items-center gap-[18px]"
+          class="flex-1 h-full flex flex-col justify-center items-center gap-4"
         >
           <div
             :class="[
-              'w-28 h-[50px] flex justify-center items-center gap-2.5 rounded-[34px] transition-all duration-200 ease-in-out',
+              'w-28 h-13 flex justify-center items-center gap-2.5 rounded-full transition-all duration-200 ease-in-out',
               isActive ? 'bg-white/30' : 'hover:bg-white/20',
             ]"
           >

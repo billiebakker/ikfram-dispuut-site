@@ -110,7 +110,7 @@ export default defineComponent({
     >
       <button
         @click="toggleSort"
-        class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg"
+        class="flex gap-1 p-2 pr-3 justify-center items-center bg-ribbook-red rounded-lg hover:bg-white/20 cursor-pointer"
       >
         <span class="icon icon-yellow">{{
           this.sortAscending ? 'Arrow_Upward' : 'Arrow_Downward'
@@ -119,19 +119,18 @@ export default defineComponent({
       </button>
       <router-link
         :to="{ name: 'create-event' }"
-        class="flex gap-1 justify-center items-center bg-ribbook-red rounded-lg"
+        class="flex gap-1 p-2 justify-center items-center bg-ribbook-red rounded-lg hover:bg-white/20"
       >
         <span class="icon icon-yellow">Add_Ad</span>
         <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Nieuw</span>
       </router-link>
       <button
         @click="toggleArchive"
-        class="flex w-20 gap-1 justify-left items-center bg-ribbook-red rounded-lg"
+        class="flex gap-1 p-2 pr-2.5 justify-left items-center bg-ribbook-red rounded-lg hover:bg-white/20 cursor-pointer"
+        :class="this.archiveActive ? 'bg-white/30' : ''"
       >
         <span class="icon icon-yellow">{{ this.archiveActive ? 'History_Off' : 'History' }}</span>
-        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">
-          {{ this.archiveActive ? 'Terug' : 'Archief' }}
-        </span>
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">Archief</span>
       </button>
     </section>
 

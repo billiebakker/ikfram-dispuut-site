@@ -49,9 +49,10 @@ export default {
     <footer class="w-full px-6 py-1 flex justify-between items-center">
       <!-- comments -->
       <button
+        @click="goToPost"
         class="w-20 h-10 rounded-full flex items-center justify-center gap-1 hover:bg-bg-light transition-all duration-200 ease-in-out"
       >
-        <span class="icon icon-500 icon-gray">Chat_Bubble</span>
+        <span class="icon icon-gray">Chat_Bubble</span>
         <span class="text-comment-stats">
           {{ post.commentCount }}
         </span>
