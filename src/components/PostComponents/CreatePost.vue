@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       postSchema: {
-        postText: 'min:2|max:400',
+        postText: 'required|min:2|max:400',
       },
       post_in_submission: false,
       post_show_alert: false,
@@ -72,6 +72,7 @@ export default {
           <vee-field
             as="textarea"
             name="postText"
+            required
             placeholder="max 400 tekens...."
             class="w-full resize-none px-3 py-2 text-text-muted bg-bg-light rounded-[12px] text-base font-normal font-roboto focus:outline-none"
             @input="autoResize"
