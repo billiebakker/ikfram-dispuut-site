@@ -32,6 +32,7 @@ const routes = [
       { name: 'create-event', path: 'aanmaken', component: CreateEventView },
       { name: 'event-detail', path: ':id', component: EventDetailsView },
       { name: 'event-signup', path: 'aanmelden/:id', component: EventSignUpView },
+      { path: ':id/aanmelden', redirect: { name: 'event-signup' } },
     ],
   },
   {

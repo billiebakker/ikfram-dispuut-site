@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
-import { auth, db, eventCollection } from '@/includes/firebase'
+import { db, eventCollection } from '@/includes/firebase'
+import useUserStore from '@/stores/user.js'
 import {
+  deleteField,
   doc,
   getDoc,
   getDocs,
+  increment,
   limit,
   orderBy,
   query,
@@ -23,16 +26,41 @@ export default defineStore('events', {
     sortAscending: true,
   }),
   actions: {
-    async signUp(event, formValues) {
-      if (!auth.currentUser) {
-        throw new Error('User must be logged in to sign up')
+    async userAlreadySignedUp(event) {
+      const user = useUserStore().currentUser
+      const uid = user.uid
+      const eventRef = doc(db, 'events', event.docID)
+      const eventSnapshot = await getDoc(eventRef)
+      return !!eventSnapshot.data().signUps?.[uid]
+    },
+    async removeSignUp(event) {
+      const user = useUserStore().currentUser
+      const uid = user.uid
+      // zou ook cache kunnen gebruiken eigenlijk
+      const eventRef = doc(db, 'events', event.docID)
+      const alreadySignedUp = await this.userAlreadySignedUp(event)
+      // voor veiligheid
+      if (!alreadySignedUp) return
+
+      try {
+        await updateDoc(eventRef, {
+          [`signUps.${uid}`]: deleteField(),
+          attendeeCount: increment(-1),
+        })
+      } catch (error) {
+        console.error(error)
       }
 
-      const uid = auth.currentUser.uid
+      // kan efficienter, alleen deze event refreshen
+      await this.refreshEvents()
+    },
+    async signUpOrUpdate(event, formValues) {
+      const user = useUserStore().currentUser
+
+      const uid = user.uid
 
       const signupData = {
-        name: auth.currentUser.name,
-        displayName: auth.currentUser.displayName,
+        displayName: user.displayName,
         foodChoice: formValues.foodChoice || null,
         drinkChoice: formValues.drinkChoice || null,
         allergies: formValues.allergies || null,
@@ -40,16 +68,19 @@ export default defineStore('events', {
 
       const eventRef = doc(db, 'events', event.docID)
 
-      await updateDoc(eventRef, {
+      const updatePayload = {
         [`signUps.${uid}`]: signupData,
-      })
-
-      // cached event opslaan lokaal
-      const cached = this.events.find((p) => p.docID === event.docID)
-      if (cached) {
-        if (!cached.signUps) cached.signUps = {}
-        cached.signUps[uid] = signupData
       }
+
+      const alreadySignedUp = await this.userAlreadySignedUp(event)
+
+      if (!alreadySignedUp) {
+        updatePayload.attendeeCount = increment(1)
+      }
+
+      await updateDoc(eventRef, updatePayload)
+
+      await this.refreshEvents()
     },
     toggleSort() {
       this.sortAscending = !this.sortAscending

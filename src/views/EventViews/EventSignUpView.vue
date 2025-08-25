@@ -24,14 +24,14 @@ export default {
     }
   },
   methods: {
-    async submitSignUp(values) {
+    async submitSignUp(formValues) {
       try {
         this.signup_in_submission = true
         this.signup_show_alert = true
         this.signup_alert_variant = 'bg-blue-800'
         this.signup_alert_msg = 'even wachten...'
 
-        await useEventsStore().signUp(this.event, values)
+        await useEventsStore().signUpOrUpdate(this.event, formValues)
 
         this.signup_in_submission = false
         this.signup_alert_variant = 'bg-green-500'
@@ -162,14 +162,14 @@ export default {
         </template>
 
         <!-- drinken -->
-        <div v-if="event.drinkOption">
+        <div v-if="event.drinkOptions">
           <label class="block pb-2">Wat wil je drinken?</label>
           <div class="flex flex-wrap gap-2">
             <vee-field
-              v-for="drink in event.drinkOptions"
+              v-for="drink in ['geen drinken', ...event.drinkOptions]"
               :key="drink"
               :value="drink"
-              name="drink_choice"
+              name="drinkChoice"
               type="radio"
               v-slot="{ field, value }"
             >
