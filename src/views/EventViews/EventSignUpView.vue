@@ -49,7 +49,8 @@ export default {
         this.signup_alert_variant = 'bg-green-500'
         this.signup_alert_msg = 'Yay gelukt!'
 
-        await router.push({ name: 'event-detail', params: { id: this.event.docID } })
+        // await router.push({ name: 'event-detail', params: { id: this.event.docID } })
+        await router.go(-1)
       } catch (error) {
         console.error(error)
         this.signup_in_submission = false
@@ -64,7 +65,8 @@ export default {
         this.signup_in_submission = true
         this.signup_show_alert = true
         await useEventsStore().removeSignUp(this.event)
-        await router.push({ name: 'event-detail', params: { id: this.event.docID } })
+        // await router.push({ name: 'event-detail', params: { id: this.event.docID } })
+        await router.go(-1)
       } else {
         this.confirmUnsubscribe = true
       }
