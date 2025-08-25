@@ -7,6 +7,7 @@ import useUserStore from '@/stores/user'
 import PostDetailsView from '@/views/PostDetailsView.vue'
 import CreateEventView from '@/views/EventViews/CreateEventView.vue'
 import EventDetailsView from '@/views/EventViews/EventDetailsView.vue'
+import EventSignUpView from '@/views/EventViews/EventSignUpView.vue'
 
 const routes = [
   {
@@ -30,6 +31,8 @@ const routes = [
       { name: 'events', path: '', component: EventsView },
       { name: 'create-event', path: 'aanmaken', component: CreateEventView },
       { name: 'event-detail', path: ':id', component: EventDetailsView },
+      { name: 'event-signup', path: 'aanmelden/:id', component: EventSignUpView },
+      { path: ':id/aanmelden', redirect: { name: 'event-signup' } },
     ],
   },
   {

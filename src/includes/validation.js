@@ -45,13 +45,14 @@ export default {
           foodOption: 'Eten keuze',
           description: 'Beschrijving',
           location: 'Locatie',
+          allergies: 'Allergieën',
         }
 
         const messages = {
           required: `${fieldNames[ctx.field] || ctx.field} is vereist!`,
           min: `${fieldNames[ctx.field] || ctx.field} is te kort, minimaal ${ctx.rule.params[0]} karakters!`,
           max: `${fieldNames[ctx.field] || ctx.field} is te lang, maximaal ${ctx.rule.params[0]} karakters!`,
-          alpha_spaces: `${fieldNames[ctx.field] || ctx.field} moet alleen letters en spaties bevatten!!`,
+          alpha_spaces: `${fieldNames[ctx.field] || ctx.field} mag alleen letters en spaties bevatten!!`,
           email: `Ongeldig e-mailadres :(!`,
           min_value: `${fieldNames[ctx.field] || ctx.field} is te laag!`,
           max_value: `${fieldNames[ctx.field] || ctx.field} is te hoog!`,

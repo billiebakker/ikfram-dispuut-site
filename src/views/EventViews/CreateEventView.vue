@@ -27,6 +27,7 @@ export default {
 
       drinkOptions: ['Bier', 'Wijn', 'Fris', 'Cocktail'],
       newDrink: '',
+      selectedDrinkOptions: [],
     }
   },
   methods: {
@@ -34,6 +35,7 @@ export default {
       const drink = this.newDrink.trim()
       if (drink && !this.drinkOptions.includes(drink)) {
         this.drinkOptions.push(drink)
+        this.selectedDrinkOptions.push(drink)
         this.newDrink = ''
       }
     },
@@ -62,13 +64,13 @@ export default {
         location: values.location,
 
         datePosted: new Date().toISOString(),
-        // userDisplayName: auth.currentUser.userDisplayName,
+        userDisplayName: auth.currentUser.displayName,
         uid: auth.currentUser.uid,
         commentCount: 0,
         attendeeCount: 0,
 
         foodOption: values.foodOption,
-        drinkOptions: this.drinkOptions,
+        drinkOptions: this.selectedDrinkOptions,
       }
 
       //   toevoegen aan db
@@ -79,6 +81,9 @@ export default {
       this.event_alert_msg = 'event is aangemaakt!'
 
       await useEventsStore().refreshEvents()
+
+      // voor als er meerdere events in 1 sessie worden aangemaakt
+      this.selectedDrinkOptions = []
 
       this.$router.push({ name: 'events' })
     },
@@ -95,6 +100,7 @@ export default {
     >
       <vee-form
         @submit="submitEvent"
+        @keydown.enter.prevent
         :validation-schema="eventSchema"
         :initial-values="{
           deadlineInHoursToEvent: 2,
@@ -247,17 +253,23 @@ export default {
               name="drinks"
               type="checkbox"
               :value="drink"
-              v-slot="{ field, value }"
+              v-slot="{ field }"
             >
               <label
                 class="flex-1 text-center px-3 py-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out"
                 :class="
-                  value?.includes(drink)
+                  selectedDrinkOptions.includes(drink)
                     ? 'bg-ribbook-pink border border-dark-gray text-white'
                     : 'bg-gray-100 text-gray-700 border border-gray-100 hover:bg-bg-light'
                 "
               >
-                <input v-bind="field" type="checkbox" class="hidden" />
+                <input
+                  v-bind="field"
+                  type="checkbox"
+                  class="hidden"
+                  :value="drink"
+                  v-model="selectedDrinkOptions"
+                />
                 {{ drink }}
               </label>
             </vee-field>
