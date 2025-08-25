@@ -1,16 +1,24 @@
 <script>
 import useEventsStore from '@/stores/events'
 import EventSignUpButton from '@/components/EventComponents/EventSignUpButton.vue'
+import EventAttendeesList from '@/components/EventComponents/EventAttendeesList.vue'
 
 export default {
   name: 'EventDetailsView',
-  components: { EventSignUpButton },
+  components: { EventAttendeesList, EventSignUpButton },
   data() {
     return {
       event: null,
       pendingRequest: true,
       error: null,
+
+      showAttendeeList: false,
     }
+  },
+  methods: {
+    toggleAttendeeList() {
+      this.showAttendeeList = !this.showAttendeeList
+    },
   },
   async created() {
     await useEventsStore()
@@ -24,10 +32,11 @@ export default {
 </script>
 
 <template>
+  <EventAttendeesList v-if="showAttendeeList" :event="event" @close="toggleAttendeeList" />
   <div class="w-full h-full flex flex-col">
     <div v-if="pendingRequest" class="py-8 text-gray-600">Aan het laden...</div>
     <div v-else-if="error" class="py-8 text-red-500">{{ error }}</div>
-    <!--    todo betere error handling en error message (component?)-->
+    <!--    todo betere error handling en error message (component maken?)-->
     <template v-else>
       <div class="flex-1 min-h-0 overflow-auto">
         <div class="sticky top-0 z-0">
@@ -77,24 +86,29 @@ export default {
               {{ event.title }}
             </h1>
 
-            <div class="border-t border-gray-300" />
+            <div class="flex flex-col gap-1">
+              <div class="border-t border-gray-300" />
 
-            <!-- locatie, aantal ingeschreven -->
-            <div
-              class="flex flex-wrap gap-3 justify-between items-center text-sm text-ribbook-dark-gray"
-            >
-              <div class="flex items-center gap-2">
-                <span class="icon icon-gray">Location_On</span>
-                <span>{{ event.location || 'geen locatie' }}</span>
+              <!-- locatie, aantal ingeschreven -->
+              <div
+                class="flex flex-wrap justify-between items-center text-sm text-ribbook-dark-gray"
+              >
+                <div class="flex items-center gap-2 p-2">
+                  <span class="icon icon-gray">Location_On</span>
+                  <span>{{ event.location || 'geen locatie' }}</span>
+                </div>
+
+                <button
+                  class="flex items-center gap-2 p-2 rounded-md hover:bg-bg-light transition-all duration-200 ease-in-out"
+                  @click="toggleAttendeeList"
+                >
+                  <span class="icon icon-gray icon-filled">Group</span>
+                  <span>{{ event.attendeeCount }} aanmeldingen</span>
+                </button>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="icon icon-gray icon-filled">Group</span>
-                <span>{{ event.attendeeCount }} aanmeldingen</span>
-              </div>
+
+              <div class="border-t border-gray-300" />
             </div>
-
-            <div class="border-t border-gray-300"></div>
-
             <!-- beschrijving -->
             <div class="flex flex-col gap-3">
               <p class="font-roboto">
