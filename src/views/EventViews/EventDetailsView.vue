@@ -46,8 +46,10 @@ export default {
             alt=""
             class="w-full h-[222px] object-cover"
           />
-          <!--        todo als geen image-->
-          <!-- <div v-else class="w-full h-[222px] bg-gray-200"></div> -->
+          <div
+            v-else
+            class="w-full h-[222px] bg-gradient-to-t from-transparent to-ribbook-pink"
+          ></div>
         </div>
 
         <div class="px-2">

@@ -54,7 +54,7 @@ export default {
     <div v-if="!event.headerImage" class="self-stretch h-0 px-2 py-2 inline-flex flex-col gap-2.5">
       <div class="self-stretch h-0 outline outline-1 outline-gray-300" />
     </div>
-    <img v-else class="w-[484px] h-[123px]" :src="event.headerImage" alt="" />
+    <img v-else class="w-full" :src="event.headerImage" alt="" />
 
     <!-- event description -->
     <article class="w-full px-3 py-2 flex flex-col items-center">
