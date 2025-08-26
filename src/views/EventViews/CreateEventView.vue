@@ -1,10 +1,12 @@
 <script>
 import { ErrorMessage } from 'vee-validate'
-import { auth, eventCollection } from '@/includes/firebase.js'
+import { auth, eventCollection, storage } from '@/includes/firebase.js'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { addDoc } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import useEventsStore from '@/stores/events'
+import imageCompression from 'browser-image-compression'
 
 export default {
   name: 'CreateEventView',
@@ -28,6 +30,9 @@ export default {
       drinkOptions: ['Bier', 'Wijn', 'Fris', 'Cocktail'],
       newDrink: '',
       selectedDrinkOptions: [],
+
+      is_dragover: false,
+      imageUpload: null, // { name, progress, url, task }
     }
   },
   methods: {
@@ -43,6 +48,68 @@ export default {
       const textarea = e.target
       textarea.style.height = 'auto' // eerst resetten
       textarea.style.height = textarea.scrollHeight + 'px'
+    },
+    async uploadImage(event) {
+      this.is_dragover = false
+
+      // file is van dragover of van file select
+      const file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0]
+      if (!file) return
+
+      // nu even zo; kan later stylized
+      if (!file.type.startsWith('image/')) {
+        alert('Alleen afbeeldingen zijn toegestaan!')
+        return
+      }
+
+      let compressedFile
+      try {
+        compressedFile = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        })
+      } catch (err) {
+        console.error('Image compression failed:', err)
+        return
+      }
+
+      // Create Firebase storage ref
+      const uniqueName = `${Date.now()}_${file.name}`
+      const imgRef = ref(storage, `event-images/${uniqueName}`)
+
+      const task = uploadBytesResumable(imgRef, compressedFile)
+
+      // dit is voor progressbar enzo
+      this.imageUpload = {
+        task,
+        name: file.name,
+        progress: 0,
+        url: null,
+        status: 'uploading',
+      }
+
+      task.on(
+        'state_changed',
+        (snapshot) => {
+          this.imageUpload.progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+          )
+        },
+        (error) => {
+          console.error('Upload failed:', error)
+          this.imageUpload.status = 'error'
+        },
+        async () => {
+          try {
+            this.imageUpload.url = await getDownloadURL(task.snapshot.ref)
+            this.imageUpload.status = 'done'
+          } catch (err) {
+            console.error('Could not get download URL:', err)
+            this.imageUpload.status = 'error'
+          }
+        },
+      )
     },
     async submitEvent(values) {
       this.event_in_submission = true
@@ -60,7 +127,7 @@ export default {
         description: values.description,
         signupDeadline: signupDeadline.toISOString(),
 
-        headerImage: 'https://placehold.co/484x123',
+        headerImage: this.imageUpload?.url || null,
         location: values.location,
 
         datePosted: new Date().toISOString(),
@@ -88,6 +155,11 @@ export default {
       this.$router.push({ name: 'events' })
     },
   },
+  beforeUnmount() {
+    if (this.imageUpload?.task) {
+      this.imageUpload.task.cancel()
+    }
+  },
 }
 </script>
 
@@ -96,7 +168,7 @@ export default {
     class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5 overflow-auto"
   >
     <div
-      class="max-w-3xl p-2 w-full py-1 bg-white rounded-lg outline outline-3 outline-ribbook-pink flex flex-col items-center gap-2.5"
+      class="max-w-3xl p-3 w-full py-1 bg-white rounded-lg outline outline-3 outline-ribbook-pink flex flex-col items-center gap-2.5"
     >
       <vee-form
         @submit="submitEvent"
@@ -130,6 +202,65 @@ export default {
             @input="autoResize"
           ></vee-field>
           <ErrorMessage name="description" class="text-ribbook-red text-sm mt-1 block" />
+        </div>
+
+        <!--        afbeelding uploaden -->
+        <div>
+          <label class="block pb-2">Afbeelding toevoegen</label>
+          <div
+            class="w-full rounded text-center cursor-pointer border border-ribbook-pink text-gray-400 transition duration-150 hover:text-white hover:bg-ribbook-pink hover:border-ribbook-pink"
+            :class="{ 'bg-ribbook-pink border-ribbook-pink': is_dragover }"
+            @drag.prevent.stop=""
+            @dragstart.prevent.stop=""
+            @dragend.prevent.stop="is_dragover = false"
+            @dragover.prevent.stop="is_dragover = true"
+            @dragenter.prevent.stop="is_dragover = true"
+            @dragleave.prevent.stop="is_dragover = false"
+            @drop.prevent.stop="uploadImage($event)"
+            @click="$refs.imageInput.click()"
+          >
+            <p class="p-6" v-if="!imageUpload">
+              sleep een afbeelding hierheen of klik om te kiezen
+            </p>
+            <p class="p-6" v-else-if="imageUpload.status === 'uploading'">ok even wachten...</p>
+            <img v-else-if="imageUpload.status === 'done'" :src="imageUpload.url" alt="" />
+            <p class="p-6" v-else-if="imageUpload.status === 'error'">
+              iets mis gegaan helaas, probeer nog eens??
+            </p>
+          </div>
+          <input
+            ref="imageInput"
+            type="file"
+            accept="image/*"
+            @change="uploadImage($event)"
+            class="hidden"
+          />
+
+          <!-- progress bar -->
+          <div v-if="imageUpload" class="mt-2">
+            <div class="font-bold text-sm">
+              <i v-if="imageUpload.status === 'uploading'" class="fas fa-spinner fa-spin" />
+              <i v-else-if="imageUpload.status === 'done'" class="fas fa-check text-green-500" />
+              <i v-else-if="imageUpload.status === 'error'" class="fas fa-times text-red-500" />
+              {{ imageUpload.name }}
+            </div>
+            <div class="flex h-3 overflow-hidden bg-gray-200 rounded">
+              <!--         hahahhaha i love ternary operators-->
+              <div
+                class="transition-all"
+                :class="
+                  imageUpload.status === 'uploading'
+                    ? 'bg-ribbook-pink'
+                    : imageUpload.status === 'done'
+                      ? 'bg-green-500'
+                      : imageUpload.status === 'error'
+                        ? 'bg-red-500'
+                        : ''
+                "
+                :style="{ width: imageUpload.progress + '%' }"
+              />
+            </div>
+          </div>
         </div>
 
         <div>
@@ -295,6 +426,13 @@ export default {
           </div>
         </div>
 
+        <div
+          v-show="event_show_alert"
+          class="w-full px-1.5 flex gap-2.5 rounded-md"
+          :class="event_alert_variant"
+        >
+          {{ event_alert_msg }}
+        </div>
         <!--          submit-->
         <button
           type="submit"
@@ -306,22 +444,6 @@ export default {
           <span class="icon icon-yellow">Calendar_Add_On</span>
         </button>
       </vee-form>
-      <div
-        v-show="event_show_alert"
-        class="w-full px-1.5 flex gap-2.5 rounded-md"
-        :class="event_alert_variant"
-      >
-        {{ event_alert_msg }}
-      </div>
     </div>
   </section>
 </template>
-
-<style scoped>
-label {
-  font-size: 16px;
-  font-family: 'roboto', sans-serif;
-  color: var(--color-dark-gray);
-  padding: 4px;
-}
-</style>
