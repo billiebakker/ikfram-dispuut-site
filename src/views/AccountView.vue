@@ -2,9 +2,7 @@
 import { defineComponent } from 'vue'
 import { mapStores } from 'pinia'
 import useUserStore from '@/stores/user'
-import { updateProfile } from 'firebase/auth'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
-import { db, storage } from '@/includes/firebase.js'
+import { storage } from '@/includes/firebase.js'
 import { ErrorMessage, Field as VeeField, Form as VeeForm } from 'vee-validate'
 import imageCompression from 'browser-image-compression'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
@@ -38,19 +36,12 @@ export default defineComponent({
       account_alert_msg: 'even wachten...',
     }
   },
-  async mounted() {
-    const user = useUserStore().currentUser
-
-    const userDoc = await getDoc(doc(db, 'users', user.uid))
-    const data = userDoc.data()
-    console.log(data)
-    this.initialValues = {
-      displayName: data.displayName, //|| user.displayName || '',
-      allergies: data.allergies || '',
-    }
-  },
 
   methods: {
+    async logout() {
+      await useUserStore().logout()
+      this.$router.push({ name: 'login' })
+    },
     async submitAccount(values) {
       try {
         this.account_in_submission = true
@@ -58,20 +49,9 @@ export default defineComponent({
         this.account_alert_variant = 'bg-blue-800'
         this.account_alert_msg = 'ok wacht even...'
 
-        const user = useUserStore().currentUser
-
-        // update Firebase Auth profile
-        await updateProfile(user, {
-          displayName: values.displayName,
-          // photoURL: this.imageUpload?.url || user.photoURL,
-        })
-
-        // update Firestore doc
-        const userDoc = doc(db, 'users', user.uid)
-        await updateDoc(userDoc, {
+        await this.userStore.updateUserProfile({
           displayName: values.displayName,
           allergies: values.allergies || '',
-          // photoURL: this.imageUpload?.url || user.photoURL || '',
         })
 
         this.account_in_submission = false
@@ -79,28 +59,24 @@ export default defineComponent({
         this.account_alert_msg = 'Profiel succesvol opgeslagen!'
       } catch (err) {
         console.error(err)
-
         this.account_in_submission = false
         this.account_alert_variant = 'bg-red-800'
         this.account_alert_msg = 'oei, wat fout gegaan :( probeer opnieuw aub?'
       }
     },
     async uploadProfilePicture(event) {
-      this.account_in_submission = true
-      this.account_show_alert = true
-      this.account_alert_variant = 'bg-blue-800'
-      this.account_alert_msg = 'ok even wachten...'
-
       const file = event.target.files[0]
       if (!file) return
       if (!file.type.startsWith('image/')) {
         this.account_alert_msg = 'Alleen afbeeldingen zijn toegestaan!'
         this.account_alert_variant = 'bg-red-800'
-        this.account_in_submission = false
         return
       }
 
       try {
+        this.account_in_submission = true
+        this.account_show_alert = true
+        this.account_alert_variant = 'bg-blue-800'
         this.account_alert_msg = 'ff foto kleiner maken...'
 
         const compressedFile = await imageCompression(file, {
@@ -111,60 +87,31 @@ export default defineComponent({
 
         this.account_alert_msg = 'foto aan het uploaden...'
 
-        const user = useUserStore().currentUser
+        const user = this.userStore.currentUser
         const imgRef = ref(storage, `profile-pictures/${user.uid}_${Date.now()}.jpg`)
         await uploadBytes(imgRef, compressedFile)
 
         const url = await getDownloadURL(imgRef)
 
+        // ✅ immediately save to Firebase/Auth/Firestore via store
+        await this.userStore.updateUserProfile({ photoURL: url })
+
+        // show preview
         this.imageUpload = {
           url,
           file: compressedFile,
           status: 'done',
-        }
-        await this.submitProfilePicture()
-      } catch (err) {
-        console.error('Image upload failed:', err)
-        this.imageUpload = { status: 'error' }
-      }
-    },
-    async submitProfilePicture() {
-      try {
-        this.account_in_submission = true
-        this.account_show_alert = true
-        this.account_alert_variant = 'bg-blue-800'
-        this.account_alert_msg = 'foto vastmaken aan profiel...'
-        const user = useUserStore().currentUser
-
-        // update Firebase Auth profile
-        await updateProfile(user, {
-          // displayName: values.displayName,
-          photoURL: this.imageUpload?.url || user.photoURL,
-        })
-
-        // update Firestore doc
-        const userDoc = doc(db, 'users', user.uid)
-        await updateDoc(userDoc, {
-          // displayName: values.displayName,
-          // allergies: values.allergies || '',
-          photoURL: this.imageUpload?.url || user.photoURL || '',
-        })
-
-        // update local store
-        this.userStore.currentUser = {
-          ...user,
-          // displayName: values.displayName,
-          photoURL: this.imageUpload?.url || user.photoURL,
         }
 
         this.account_in_submission = false
         this.account_alert_variant = 'bg-green-800'
         this.account_alert_msg = 'foto opgeslagen!'
       } catch (err) {
-        console.error(err)
+        console.error('Image upload failed:', err)
         this.account_in_submission = false
         this.account_alert_variant = 'bg-red-800'
-        this.account_alert_msg = 'oei, wat fout gegaan :( probeer opnieuw aub?'
+        this.account_alert_msg = 'oei, upload mislukt :('
+        this.imageUpload = { status: 'error' }
       }
     },
   },
@@ -173,10 +120,10 @@ export default defineComponent({
 
 <template>
   <section
-    class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-2.5 overflow-auto"
+    class="w-full flex-1 px-2.5 py-1 flex flex-col justify-start items-center gap-6 overflow-auto"
   >
     <div
-      class="max-w-xl p-3 w-full py-1 bg-white rounded-lg outline outline-3 outline-ribbook-yellow flex flex-col items-center gap-4"
+      class="max-w-xl p-6 py-4 w-full bg-white rounded-lg outline outline-3 outline-ribbook-yellow flex flex-wrap justify-center items-center gap-8"
     >
       <!-- header user info -->
       <div class="flex flex-col items-center gap-2">
@@ -202,22 +149,26 @@ export default defineComponent({
           @change="uploadProfilePicture($event)"
         />
         <p class="text-lg font-semibold font-roboto text-text-muted">
-          {{ userStore.currentUser?.name || userStore.currentUser?.displayName || 'Naam onbekend' }}
+          {{ userStore.userProfile?.displayName || '' }}
         </p>
       </div>
 
       <!-- profiel form -->
       <vee-form
+        :key="userStore.userProfile?.displayName"
         @submit="submitAccount"
         @keydown.enter.prevent
         :validation-schema="accountSchema"
         :enable-initial-values="true"
-        :initial-values="initialValues"
-        class="w-full flex-1 flex flex-col gap-2.5"
+        :initial-values="{
+          displayName: userStore.userProfile?.displayName || '',
+          allergies: userStore.userProfile?.allergies || '',
+        }"
+        class="w-full min-w-[230px] flex-1 flex flex-col gap-2.5"
       >
         <!-- displayName -->
         <div>
-          <label class="block mb-1 font-medium">Voornaam (of bijnaam)</label>
+          <label class="block mb-1 font-medium">Voornaam (of bijnaam) aanpassen</label>
           <vee-field
             name="displayName"
             placeholder="naam die op posts verschijnt"
@@ -250,6 +201,29 @@ export default defineComponent({
         :class="account_alert_variant"
       >
         {{ account_alert_msg }}
+      </div>
+    </div>
+
+    <div
+      class="max-w-xl p-6 py-4 w-full bg-white rounded-lg outline outline-3 outline-ribbook-yellow flex flex-wrap justify-center items-center gap-8"
+    >
+      <button
+        @click="logout"
+        class="px-4 my-1 h-10 bg-ribbook-red rounded-lg flex items-center gap-3 justify-center cursor-pointer"
+      >
+        <span class="text-sm font-semibold font-roboto text-ribbook-yellow">uitloggen</span>
+      </button>
+      <div class="flex flex-col gap-1">
+        <p class="w-full">
+          Jouw rol: <span class="font-semibold">{{ userStore.userProfile?.role }} </span>
+        </p>
+        <p class="w-full">
+          Jouw email: <span class="font-semibold"> {{ userStore.currentUser?.email }} </span>
+        </p>
+        <p class="text-text-muted">
+          Vraag een admin (bestuur of techsub) om deze dingen aan te passen of om je account te
+          verwijderen
+        </p>
       </div>
     </div>
   </section>
