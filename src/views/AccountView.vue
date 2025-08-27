@@ -6,10 +6,12 @@ import { storage } from '@/includes/firebase.js'
 import { ErrorMessage, Field as VeeField, Form as VeeForm } from 'vee-validate'
 import imageCompression from 'browser-image-compression'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import ProfilePicture from '@/components/common/ProfilePicture.vue'
 
 export default defineComponent({
   name: 'AccountView',
   components: {
+    ProfilePicture,
     VeeForm,
     VeeField,
     ErrorMessage,
@@ -80,8 +82,8 @@ export default defineComponent({
         this.account_alert_msg = 'ff foto kleiner maken...'
 
         const compressedFile = await imageCompression(file, {
-          maxSizeMB: 0.3,
-          maxWidthOrHeight: 720,
+          maxSizeMB: 0.1,
+          maxWidthOrHeight: 200,
           useWebWorker: true,
         })
 
@@ -127,20 +129,12 @@ export default defineComponent({
     >
       <!-- header user info -->
       <div class="flex flex-col items-center gap-2">
-        <div class="hover:cursor-pointer hover:opacity-70 bg-ribbook-pink rounded-full">
-          <img
-            v-if="imageUpload?.url || userStore.currentUser?.photoURL"
-            :src="imageUpload?.url || userStore.currentUser?.photoURL"
-            alt="Profielfoto"
-            class="w-24 h-24 rounded-full object-cover border-2 border-ribbook-pink"
-            @click="$refs.imageUpload.click()"
-          />
-          <div
-            v-else
-            class="w-24 h-24 bg-ribbook-pink rounded-full"
-            @click="$refs.imageUpload.click()"
-          />
-        </div>
+        <ProfilePicture
+          :userPhotoURL="userStore.userProfile?.photoURL"
+          big
+          class="hover:cursor-pointer hover:opacity-70"
+          @click="$refs.imageUpload.click()"
+        />
         <input
           ref="imageUpload"
           type="file"

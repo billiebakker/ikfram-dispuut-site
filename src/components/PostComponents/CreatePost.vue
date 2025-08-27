@@ -2,10 +2,12 @@
 import { addDoc } from 'firebase/firestore'
 import { auth, postCollection } from '@/includes/firebase.js'
 import { ErrorMessage } from 'vee-validate'
+import ProfilePicture from '@/components/common/ProfilePicture.vue'
+import useUserStore from '@/stores/user.js'
 
 export default {
   name: 'CreatePost',
-  components: { ErrorMessage },
+  components: { ProfilePicture, ErrorMessage },
   emits: ['newPostSubmitted'],
   data() {
     return {
@@ -17,6 +19,11 @@ export default {
       post_alert_variant: 'bg-blue-800',
       post_alert_msg: 'even wachten...',
     }
+  },
+  computed: {
+    userPhotoURL() {
+      return useUserStore().currentUser.photoURL
+    },
   },
   methods: {
     autoResize(e) {
@@ -36,6 +43,7 @@ export default {
         datePosted: new Date().toISOString(),
         uid: auth.currentUser.uid,
         userDisplayName: auth.currentUser.displayName,
+        userPhotoURL: auth.currentUser.photoURL,
         commentCount: 0,
         likeCount: 0,
         dislikeCount: 0,
@@ -60,11 +68,7 @@ export default {
     class="max-w-[480px] w-full py-[5px] bg-white rounded-[13px] outline outline-[3px] outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
     <div class="mt-0.5 w-full px-1.5 flex gap-2.5">
-      <!--      pf-->
-      <div class="py-1">
-        <!--        TODO replace with pf-->
-        <div class="w-[46px] h-[46px] bg-ribbook-pink rounded-full"></div>
-      </div>
+      <ProfilePicture :userPhotoURL="userPhotoURL" />
 
       <!--      input -->
       <vee-form @submit="submitPost" :validation-schema="postSchema" class="flex-1 flex">

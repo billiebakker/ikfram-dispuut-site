@@ -1,8 +1,10 @@
 <script>
 import router from '@/router/index.js'
+import ProfilePicture from '@/components/common/ProfilePicture.vue'
 
 export default {
   name: 'PostItem',
+  components: { ProfilePicture },
   props: {
     post: Object,
   },
@@ -20,15 +22,14 @@ export default {
     class="max-w-[480px] w-full bg-white rounded-xl outline outline-3 outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
     <!--    pf, naam, tijd-->
-    <header class="w-full flex flex-col items-center gap-[5px]" @click="goToPost">
-      <div class="w-full h-[54px] pl-1.5 pr-[22px] flex items-center gap-1 overflow-hidden">
-        <!--        vervang dit met pf-->
-        <div class="w-[46px] h-[46px] bg-ribbook-pink rounded-full"></div>
+    <header class="w-full flex flex-col items-center gap-1" @click="goToPost">
+      <div class="w-full h-14 pl-1.5 pr-[22px] flex items-center gap-1 overflow-hidden">
+        <ProfilePicture :userPhotoURL="post.userPhotoURL" />
         <div class="px-[9px] flex items-center gap-6 overflow-hidden">
           <h2 class="text-black text-base font-semibold font-roboto">
             {{ post.userDisplayName || 'Onbekend' }}
           </h2>
-          <p class="text-[#4f4f4f] text-sm font-normal font-roboto">
+          <p class="text-text-muted text-sm font-normal font-roboto">
             <timeago :datetime="post.datePosted" />
           </p>
         </div>
