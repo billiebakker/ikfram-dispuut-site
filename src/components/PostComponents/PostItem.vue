@@ -17,7 +17,7 @@ export default {
 
 <template>
   <section
-    class="max-w-[480px] w-full bg-white rounded-[13px] outline outline-[3px] outline-ribbook-yellow flex flex-col items-center gap-2.5"
+    class="max-w-[480px] w-full bg-white rounded-xl outline outline-3 outline-ribbook-yellow flex flex-col items-center gap-2.5"
   >
     <!--    pf, naam, tijd-->
     <header class="w-full flex flex-col items-center gap-[5px]" @click="goToPost">
