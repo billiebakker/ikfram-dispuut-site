@@ -60,7 +60,7 @@ export default {
         </button>
       </div>
 
-      <template v-if="!this.attendees">
+      <template v-if="this.attendees.length">
         <!--  totalen-->
         <div class="mb-6">
           <h3 class="font-semibold mb-2">overzichtje</h3>

@@ -217,7 +217,7 @@ export default {
             @dragenter.prevent.stop="is_dragover = true"
             @dragleave.prevent.stop="is_dragover = false"
             @drop.prevent.stop="uploadImage($event)"
-            @click="$refs.imageInput.click()"
+            @click="$refs.imageUpload.click()"
           >
             <p class="p-6" v-if="!imageUpload">
               sleep een afbeelding hierheen of klik om te kiezen
@@ -229,7 +229,7 @@ export default {
             </p>
           </div>
           <input
-            ref="imageInput"
+            ref="imageUpload"
             type="file"
             accept="image/*"
             @change="uploadImage($event)"

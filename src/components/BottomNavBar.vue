@@ -1,5 +1,7 @@
 <template>
-  <div class="h-[64px] w-full bg-ribbook-rood justify-center flex items-center">
+  <div
+    class="h-[64px] w-full bg-ribbook-rood justify-center flex items-center border-t-1 border-ribbook-pink/20"
+  >
     <nav class="shrink-0 w-full flex justify-between items-center max-w-4xl">
       <router-link
         v-for="item in navItems"
