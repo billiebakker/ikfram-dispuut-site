@@ -99,7 +99,7 @@ export default {
         <span class="text-ribbook-red">{{ event.title }}</span>
         {{ this.userAlreadySignedUp ? 'aanpassen' : '' }}
       </h1>
-      <div v-if="event.foodOption === 'no_food' && !event.drinkOption">
+      <div v-if="event.foodOption === 'no_food' && !event.drinkOptions.length">
         Dit event heeft geen eten of drinken!!!! Wat gaan we doen??? idk!!! schrijf je nu in
         yippie!!
       </div>

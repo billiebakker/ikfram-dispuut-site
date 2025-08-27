@@ -36,7 +36,7 @@ export default {
       else if (!this.isSignedUp && !this.deadlineHasPassed)
         return {
           top: 'AANMELDEN!!',
-          bottom: 'Aanmelding sluit over',
+          bottom: 'Aanmelding sluit',
           showTime: true,
         }
       else if (!this.isSignedUp && this.deadlineHasPassed)
@@ -68,14 +68,20 @@ export default {
       <span class="text-ribbook-yellow text-lg font-semibold">{{ buttonText.top }}</span>
       <span class="text-sm text-ribbook-yellow"
         >{{ buttonText.bottom }}
-        <template v-if="buttonText.showTime">
-          {{
-            new Date(event.signupDeadline).toLocaleTimeString('nl-NL', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          }}</template
-        >
+        <!--        <template v-if="buttonText.showTime">-->
+        <!--          {{-->
+        <!--            new Date(event.signupDeadline).toLocaleTimeString('nl-NL', {-->
+        <!--              day: '2-digit',-->
+        <!--              hour: '2-digit',-->
+        <!--              minute: '2-digit',-->
+        <!--            })-->
+        <!--          }}</template-->
+        <!--        >-->
+        <timeago
+          v-if="buttonText.showTime"
+          class="font-semibold"
+          :datetime="event.signupDeadline"
+        />
       </span>
     </button>
     <div v-else>een momentje....</div>
