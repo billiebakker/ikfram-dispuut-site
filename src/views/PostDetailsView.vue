@@ -24,6 +24,9 @@ export default {
     handleReaction(postId, type) {
       usePostsStore().handleReaction(postId, type)
     },
+    handleDeletePost(postId) {
+      usePostsStore().deletePost(postId)
+    },
   },
 }
 </script>
@@ -38,6 +41,7 @@ export default {
       :post="post"
       @toggle-like="() => handleReaction(post.docID, 'like')"
       @toggle-dislike="() => handleReaction(post.docID, 'dislike')"
+      @delete-post="() => handleDeletePost(post.docID)"
     />
   </div>
 </template>

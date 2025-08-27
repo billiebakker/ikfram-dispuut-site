@@ -38,6 +38,9 @@ export default {
     handleReaction(postId, type) {
       usePostsStore().handleReaction(postId, type)
     },
+    handleDeletePost(postId) {
+      usePostsStore().deletePost(postId)
+    },
     // ja vibe code helaas, scrolling lastig
     getClosestScrollableParent(node) {
       let el = node && node.nodeType === 1 ? node.parentElement : null
@@ -98,6 +101,7 @@ export default {
       :post="post"
       @toggle-like="() => handleReaction(post.docID, 'like')"
       @toggle-dislike="() => handleReaction(post.docID, 'dislike')"
+      @delete-post="() => handleDeletePost(post.docID)"
     />
     <button
       class="w-[224px] h-[42px] rounded outline outline-2 outline-offset-[-1px] outline-ribbook-yellow text-ribbook-yellow flex justify-center items-center gap-2.5"

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { db, postCollection } from '@/includes/firebase'
 import useUserStore from '@/stores/user'
 import {
+  deleteDoc,
   deleteField,
   doc,
   getDoc,
@@ -20,9 +21,14 @@ export default defineStore('posts', {
     lastDoc: null,
     noMorePosts: false,
     pendingRequest: false,
-    maxPostsPerPage: 4,
+    maxPostsPerPage: 6,
   }),
   actions: {
+    async deletePost(postId) {
+      const postRef = doc(db, 'posts', postId)
+      await deleteDoc(postRef)
+      this.posts = this.posts.filter((p) => p.docID !== postId)
+    },
     async fetchPosts() {
       if (this.pendingRequest || this.noMorePosts) return
       this.pendingRequest = true
@@ -68,13 +74,13 @@ export default defineStore('posts', {
       this.pendingRequest = false
     },
 
-    async fetchPostById(id) {
+    async fetchPostById(postId) {
       const uid = useUserStore().currentUser?.uid || null
 
-      const cached = this.posts.find((p) => p.docID === id)
+      const cached = this.posts.find((p) => p.docID === postId)
       if (cached) return cached
 
-      const snap = await getDoc(doc(db, 'posts', id))
+      const snap = await getDoc(doc(db, 'posts', postId))
       if (!snap.exists()) return null
 
       const data = snap.data()
